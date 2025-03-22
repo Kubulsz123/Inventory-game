@@ -1,123 +1,64 @@
 #include <iostream>
-#include <vector>
-#include <time.h>
 #include <string>
 using namespace std;
 
-// Temporary item class change if you want//
+enum Types
+{
+    ofensive,
+    defensive,
+    other
+};
 class Item
 {
-    private:
+    protected:
         string name;
-        float price;
-        int durability;
-
+        int price;
+        Types type;
     public:
         Item()
         {
-        this->name = "tempName";
-        this->price = 1.50;
-        this->durability = 100; 
+            this->name = "coin";
+            this->price = 1;
+            this->type = other;
         }
-        Item(string name, float price, int durability)
+        Item(string name,int price,Types type)
         {
             this->name = name;
             this->price = price;
-            this->durability = durability;
-        }
-        
-        void display()
-        { 
-            cout << "Name: " << name << " Price: " << price << " Durability: " << durability << endl;
+            this->type = type;
         }
         string getName()
         {
-            return name;
+            return this->name;
         }
-        float getPrice()
+        int getPrice()
         {
-            return price;
+            return this->price;
         }
-        int getDurability()
+        Types getType()
         {
-            return durability;
+            return this->type;
         }
         void setName(string name)
         {
             this->name = name;
         }
-        void setPrice(float price)
+        void setPrice(int price)
         {
             this->price = price;
         }
-        void setDurability(int durability)
+        void setType(Types type)
         {
-            this->durability = durability;
-        }
-};
-
-class Inventory
-{
-    private:
-        Item*** items;
-        int cols;
-        int rows;
-    public:
-        Inventory(int rows, int cols)
-        {
-            this->rows = rows;
-            this->cols = cols;
-            items = new Item**[rows];
-
-            for(int i = 0; i < rows; i++)
-            {
-                items[i] = new Item*[cols];   
-            }
-
-            for(int i = 0; i < rows; i++)
-            {
-                for(int j = 0; j < cols; j++)
-                {
-                    items[i][j] = nullptr;
-                }
-            }
+            this->type = type;
         }
         void display()
         {
-            for(int i = 0; i < rows; i++)
-            {
-                for(int j = 0; j < cols; j++)
-                {
-                    if(items[i][j] == nullptr)
-                    {
-                        cout << "[" << " " << "]";
-                    }
-                    else
-                    {
-                        cout << "[" << items[i][j]->getName()[0] << "]" << endl;
-                    }
-                }
-                cout << endl;
-            }
-        }
-        ~Inventory()
-        {
-            //some function that check if there is something in tab and remove them
-            for(int i = 0;i < rows; i++)
-            {
-                delete[] items[i];
-            }
-            delete[] items;
+            cout << "Name: " << name << endl;
+            cout << "Price: " << price << endl;
+            cout << "Type: " << type << endl;
         }
 };
 int main()
 {
-    // To see if worked // 
-    //Item ok;
-    //Item temp2("sword",2.5,100);
-    //ok.display();
-    //temp2.display();
-    //Inventory templateinv(3,5);
-    //templateinv.display();
     return 0;
 }
