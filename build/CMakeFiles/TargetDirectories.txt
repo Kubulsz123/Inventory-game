@@ -1,0 +1,3 @@
+C:/Users/jakub/OneDrive/Pulpit/Inventory-Game/build/CMakeFiles/Inventory-Game.dir
+C:/Users/jakub/OneDrive/Pulpit/Inventory-Game/build/CMakeFiles/edit_cache.dir
+C:/Users/jakub/OneDrive/Pulpit/Inventory-Game/build/CMakeFiles/rebuild_cache.dir
