@@ -13,9 +13,13 @@
           "-IC:/Users/jakub/OneDrive/Pulpit/SDL3_mixer/include",
           "-LC:/Users/jakub/OneDrive/Pulpit/SDL3_mixer/lib",
           "-lSDL3_mixer",
-          "${workspaceFolder}/main.cpp",
+          "${workspaceFolder}/src/main.cpp",
           "-o",
-          "${workspaceFolder}/build/inventory_game.exe"
+          "${workspaceFolder}/build/inventory_game.exe",
+          "-Iinclude",
+          "-Llib",
+          "-lSDL3",
+          "-lSDL3_image"
         ],
         "group": {
           "kind": "build",
