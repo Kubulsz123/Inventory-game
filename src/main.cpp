@@ -114,7 +114,7 @@ public:
         }
         else {
             delete items[row][cols];
-            items[row][cols] == nullptr;
+            items[row][cols] = nullptr;
 
             return true;
         }
@@ -140,7 +140,7 @@ public:
             for (int j = 0; j < cols; j++) {
                 if (items[i][j] != nullptr) {
                     delete items[i][j];
-                    items[i][j] == nullptr;
+                    items[i][j] = nullptr;
                 }
             }
         }
@@ -159,35 +159,26 @@ public:
 
 /* Constants */
 // Screen dimension constants
-constexpr int kScreenWidth{ 640 };
-constexpr int kScreenHeight{ 480 };
+constexpr int kScreenWidth = 640;
+constexpr int kScreenHeight = 480;
 
 /* Global Variables */
 // The window we'll be rendering to
-SDL_Window* gWindow{ nullptr };
+SDL_Window* gWindow = nullptr;
 
 // The surface contained by the window
-SDL_Surface* gScreenSurface{ nullptr };
+SDL_Surface* gScreenSurface = nullptr;
 
 // The image we will load and show on the screen
-SDL_Surface* gHelloWorld{ nullptr };
-
-/* Function Prototypes */
-// Starts up SDL and creates window
-bool init();
-
-// Loads media
-bool loadMedia();
-
-// Frees media and shuts down SDL
-void close();
+SDL_Surface* gHelloWorld = nullptr;
 
 /* Function Implementations */
 
+// Starts up SDL and creates window
 bool init()
 {
     // Initialization flag
-    bool success{ true };
+    bool success = true;
 
     // Initialize SDL
     if( !SDL_Init( SDL_INIT_VIDEO ) )
@@ -198,7 +189,7 @@ bool init()
     else
     {
         // Create window
-        if( gWindow = SDL_CreateWindow( "SDL3 Tutorial: Hello SDL3", kScreenWidth, kScreenHeight, 0 ); gWindow == nullptr )
+        if( gWindow = SDL_CreateWindow( "Buckshot Roulette", kScreenWidth, kScreenHeight, 0 ); gWindow == nullptr )
         {
             SDL_Log( "Window could not be created! SDL error: %s\n", SDL_GetError() );
             success = false;
@@ -217,10 +208,10 @@ bool init()
 bool loadMedia()
 {
     // File loading flag
-    bool success{ true };
+    bool success = true;
 
     // Load splash image
-    std::string imagePath{ "assets/preview.bmp" };
+    std::string imagePath{ "C:/Users/jakub/OneDrive/Pulpit/Inventory-Game/assets/shotgun.bmp" };
     if( gHelloWorld = SDL_LoadBMP( imagePath.c_str() ); gHelloWorld == nullptr )
     {
         SDL_Log( "Unable to load image %s! SDL Error: %s\n", imagePath.c_str(), SDL_GetError() );
@@ -249,7 +240,7 @@ void close()
 int main( int argc, char* args[] )
 {
     // Final exit code
-    int exitCode{ 0 };
+    int exitCode = 0;
 
     // Initialize
     if( !init() )
@@ -266,7 +257,7 @@ int main( int argc, char* args[] )
             exitCode = 2;
         }
         // The quit flag
-        bool quit{ false };
+        bool quit = false;
 
         // The event data
         SDL_Event e;

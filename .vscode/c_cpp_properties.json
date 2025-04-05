@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "C:/Users/jakub/OneDrive/Pulpit/SDL/include",
                 "C:/Users/jakub/OneDrive/Pulpit/SDL3_mixer/include",
-                "C:\\Users\\jakub\\OneDrive\\Pulpit\\SDL3_image\\x86_64-w64-mingw32\\include"
+                "C:\\Users\\jakub\\OneDrive\\Pulpit\\SDL3_image\\x86_64-w64-mingw32\\include",
+                "C:/Users/jakub/Onedrive/Pulpit/SDL3_ttf/x86_64-w64-mingw32/include"
             ],
             "defines": [
                 "_DEBUG",
