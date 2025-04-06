@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "C:/Users/jakub/OneDrive/Pulpit/Inventory-Game/src/main.cpp" "CMakeFiles/Inventory-Game.dir/src/main.cpp.obj" "gcc" "CMakeFiles/Inventory-Game.dir/src/main.cpp.obj.d"
+  "C:/Users/Adam/Desktop/Buckshot/Inventory-game/src/main.cpp" "CMakeFiles/Inventory-Game.dir/src/main.cpp.obj" "gcc" "CMakeFiles/Inventory-Game.dir/src/main.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.
