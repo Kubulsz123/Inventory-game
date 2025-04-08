@@ -214,7 +214,12 @@ CMakeFiles/Inventory-Game.dir/src/main.cpp.obj: src/main.cpp \
   C:/msys64/ucrt64/x86_64-w64-mingw32/include/SDL3/SDL_tray.h \
   C:/msys64/ucrt64/x86_64-w64-mingw32/include/SDL3/SDL_version.h \
   C:/msys64/ucrt64/x86_64-w64-mingw32/include/SDL3/SDL_video.h \
-  C:/msys64/ucrt64/x86_64-w64-mingw32/include/SDL3_image/SDL_image.h
+  C:/msys64/ucrt64/x86_64-w64-mingw32/include/SDL3_image/SDL_image.h \
+  src/Globals.hpp \
+  src/inventory.hpp \
+  src/items.hpp \
+  src/player.hpp \
+  src/texture.hpp
 
 
 C:/msys64/ucrt64/include/c++/14.2.0/bits/exception.h:
@@ -644,3 +649,13 @@ C:/msys64/ucrt64/x86_64-w64-mingw32/include/SDL3/SDL_touch.h:
 C:/msys64/ucrt64/x86_64-w64-mingw32/include/SDL3/SDL_tray.h:
 
 C:/msys64/ucrt64/x86_64-w64-mingw32/include/SDL3_image/SDL_image.h:
+
+src/Globals.hpp:
+
+src/inventory.hpp:
+
+src/items.hpp:
+
+src/player.hpp:
+
+src/texture.hpp:

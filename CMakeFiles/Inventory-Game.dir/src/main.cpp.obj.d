@@ -205,4 +205,9 @@ CMakeFiles/Inventory-Game.dir/src/main.cpp.obj: \
  C:/msys64/ucrt64/include/c++/14.2.0/bits/basic_ios.tcc \
  C:/msys64/ucrt64/include/c++/14.2.0/bits/ostream.tcc \
  C:/msys64/ucrt64/include/c++/14.2.0/istream \
- C:/msys64/ucrt64/include/c++/14.2.0/bits/istream.tcc
+ C:/msys64/ucrt64/include/c++/14.2.0/bits/istream.tcc \
+ C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\texture.hpp \
+ C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\Globals.hpp \
+ C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\inventory.hpp \
+ C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\items.hpp \
+ C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\player.hpp
