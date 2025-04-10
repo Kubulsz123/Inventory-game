@@ -17,23 +17,17 @@ class Texture
         int mWidth;
         int mHeight;
     public:
-        //Initializes texture variables
         Texture():
             mTexture{nullptr},
             mWidth{0},
             mHeight{0}
-        {
-
-        }
-        //Cleans up texture variables
+        {}
         ~Texture()
         {
             destroy();
         }
-        //Loads texture from disk
         bool loadFromFile(string path)
         {
-            //Clean up texture if it already exists
             destroy();
 
             //Load surface
@@ -50,30 +44,24 @@ class Texture
                 }
                 else
                 {
-                    //Get image dimensions
                     mWidth = loadedSurface->w;
                     mHeight = loadedSurface->h;
                 }
 
                 //Clean up loaded surface
                 SDL_DestroySurface(loadedSurface);
-            
             }
 
             //Return success if texture loaded
             return mTexture != nullptr;
         }
-        //Set width and height
         void setSize(int width, int height)
         {
             this->mWidth = width;
             this->mHeight = height;
         }
-
-        //Cleans up texture
         void destroy()
         {
-            //Clean up texture
             SDL_DestroyTexture(this->mTexture);
             this->mTexture = nullptr;
             this->mWidth = 0;
@@ -84,7 +72,6 @@ class Texture
             SDL_SetTextureColorMod(mTexture, r, g, b);
         }
 
-        //Draws texture
         void render(float x, float y, SDL_FRect* clip = nullptr)
         {
             //Set texture position
@@ -92,7 +79,6 @@ class Texture
 
             if (clip != nullptr) 
             {
-                // SDL_RenderCopyF for floating-point precision rendering with SDL_FRect
                 dstRect.w = clip->w;
                 dstRect.h = clip->h;
             } 
@@ -107,7 +93,6 @@ class Texture
             SDL_RenderTexture(gRenderer,mTexture,clip,&dstRect);
         }
 
-        //Gets texture dimensions
         int getWidth()
         {
             return mWidth;

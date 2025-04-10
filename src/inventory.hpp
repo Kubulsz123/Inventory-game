@@ -20,6 +20,7 @@ class Inventory {
         Item*** items;
         int rows;
         int cols;
+        bool inventoryVisible = false;
     public:
         Inventory(int rows, int cols) : rows{rows}, cols{cols} 
         {
@@ -31,6 +32,16 @@ class Inventory {
                     items[i][j] = nullptr; 
                 }
             }
+        }
+        
+        void setInventoryVisibility()
+        {
+            inventoryVisible = !inventoryVisible;
+        }
+
+        bool getInventoryVisibility()
+        {
+            return inventoryVisible;
         }
     
         void display() 
@@ -50,27 +61,34 @@ class Inventory {
             //}
             float tempXposition = 100.f;
             float tempYposition = 50.f;
-            for (int i = 0; i < rows; i++) 
+            if(inventoryVisible == true)
             {
-                for (int j = 0; j < cols; j++) 
+                for (int i = 0; i < rows; i++) 
                 {
-                    if(items[i][j] == nullptr)
+                    for (int j = 0; j < cols; j++) 
                     {
-                        slotTexture.loadFromFile("assets/emptyItem.png");
-                        slotTexture.setSize(55,55);
-                        slotTexture.setColor(0,0,0);
-                        slotTexture.render(tempXposition,tempYposition);
+                        if(items[i][j] == nullptr)
+                        {
+                            slotTexture.loadFromFile("assets/emptyItem.png");
+                            slotTexture.setSize(64,64);
+                            slotTexture.setColor(255,255,255);
+                            slotTexture.render(tempXposition,tempYposition);
+                        }
+                        else
+                        {
+                            slotTexture.loadFromFile("assets/emptyItem.png");
+                            slotTexture.setSize(64,64);
+                            slotTexture.setColor(255,255,255);
+                            slotTexture.render(tempXposition,tempYposition);
+                            itemTexture.loadFromFile(items[i][j]->getPath());
+                            itemTexture.setSize(64,64);
+                            itemTexture.render(tempXposition,tempYposition);
+                        }
+                        tempXposition = tempXposition + 100.f;
                     }
-                    else
-                    {
-                        itemTexture.loadFromFile(items[i][j]->getPath());
-                        itemTexture.setSize(55,55);
-                        itemTexture.render(tempXposition,tempYposition);
-                    }
-                    tempXposition = tempXposition + 100.f;
+                    tempXposition = 100.f;
+                    tempYposition = tempYposition + 100.f;
                 }
-                tempXposition = 100.f;
-                tempYposition = tempYposition + 100.f;
             }
         }
         bool addItem(Item* item) 

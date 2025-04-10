@@ -1,4 +1,4 @@
-//Using SDL and STL string
+
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
@@ -12,14 +12,102 @@
 #include "player.hpp"
 
 using namespace std;
-
-// Screen dimension constants
 constexpr int kScreenWidth{860};
 constexpr int kScreenHeight{700};
 constexpr int kScreenFps{60};
 
+Inventory inventory(4,2);
 
-/* Function Implementations */
+class MButton
+{
+    private:
+        SDL_FPoint position;
+        Texture sprite;
+
+    public:
+        int kButtonWidth = 100;
+        int kButtonHeight = 50;
+        bool buttonClicked;
+        bool isHovered;
+        
+        MButton()
+        {
+            this->position = {0.f,0.f};
+            this->sprite = sprite;
+            sprite.loadFromFile("assets/emptyItem.png");
+            sprite.setSize(kButtonWidth,kButtonHeight);
+            sprite.setColor(0,0,0);
+        }
+
+        Texture getSprite()
+        {
+            return sprite;
+        }
+
+        float getPositionX()
+        {
+            return position.x;
+        }
+
+        bool ifClicked()
+        {
+            if (buttonClicked)
+            {
+                buttonClicked = false;
+                return true;
+            }
+            return false;
+        }
+           
+
+        float getPositionY()
+        {
+            return position.y;
+        }
+
+
+        void setPosition(float x, float y)
+        {
+            position.x = x;
+            position.y = y;
+        }
+        void render()
+        {
+            if (buttonClicked)
+            {
+                sprite.setColor(100, 100, 100);
+            }
+            else if (isHovered)
+            {
+                sprite.setColor(200, 200, 200);
+            }
+            else
+            {
+                sprite.setColor(255, 255, 255);
+            }
+
+            sprite.render(position.x, position.y, nullptr);
+        }
+        void handleEvent(SDL_Event* e)
+        {
+            float x = -1.f, y = -1.f;
+            SDL_GetMouseState(&x, &y);
+
+            bool inside = x >= position.x && x <= position.x + kButtonWidth &&y >= position.y && y <= position.y + kButtonHeight;
+
+            if (e->type == SDL_EVENT_MOUSE_MOTION)
+            {
+                isHovered = inside;
+            }
+            else if (e->type == SDL_EVENT_MOUSE_BUTTON_DOWN && inside)
+            {
+                buttonClicked = true;
+                return;
+            }
+        }
+
+};
+
 bool init()
 {
     //Initialization flag
@@ -51,81 +139,63 @@ bool init()
     return success;
 }
 
-// Loads media
-bool loadMedia(string path)
-{
-    //File loading flag
-    bool success = true;
-
-    //Load splash image
-    if( success = gPngTexture.loadFromFile(path); !success )
-    {
-        SDL_Log( "Unable to load png image!\n");
-    }
-
-    return success;
-}
-
-// Frees media and shuts down SDL
 void close()
 {
-    //Clean up texture
     gPngTexture.destroy();
-    
-    //Destroy window
-    SDL_DestroyRenderer( gRenderer );
+    SDL_DestroyRenderer(gRenderer);
     gRenderer = nullptr;
-    SDL_DestroyWindow( gWindow );
+    SDL_DestroyWindow(gWindow);
     gWindow = nullptr;
 
-    //Quit SDL subsystems
     SDL_Quit();
 }
 
 int main( int argc, char* args[] )
 {
-    Inventory inventory(4,2);
-    inventory.addItem(new Item("name",1,other,"assets/loaded.png"));
-    inventory.addItem(new Item("name",1,other,"assets/loaded.png"));
-    inventory.addItem(new Item("name",1,other,"assets/loaded.png"));
-    inventory.addItem(new Item("name",1,other,"assets/loaded.png"));
-    inventory.addItem(new Item("name",1,other,"assets/loaded.png"));
-
+    inventory.addItem(new Item("name",1,other,"assets/handsaw.png"));
+    inventory.addItem(new Item("name",1,other,"assets/handsaw.png"));
+    inventory.addItem(new Item("name",1,other,"assets/handsaw.png"));
+    inventory.addItem(new Item("name",1,other,"assets/handsaw.png"));
+    inventory.addItem(new Item("name",1,other,"assets/handsaw.png"));
+    
     int exitCode = 0;
-    //Initialize
     if(!init())
     {
-        SDL_Log("Unable to initialize program!\n");
         exitCode = 1;
     }
     else
     {
-        //The quit flag
+        MButton button;
+        button.setPosition(100.f,50.f);
+
         bool quit = false;
         
-        //The event data
         SDL_Event e;
         SDL_zero(e);
 
-        //The main loop
         while(quit == false)
         {
-            //Get event data
             while(SDL_PollEvent(&e))
             {
-                //If event is quit type
                 if( e.type == SDL_EVENT_QUIT )
                 {
-                    //End the main loop
                     quit = true;
                 }
+                button.handleEvent(&e);
             }
 
-            //Fill the background in color
             SDL_SetRenderDrawColor(gRenderer, 255, 200, 255, 255);
             SDL_RenderClear(gRenderer);
 
+            button.render();
+
+            if (button.ifClicked())
+            {
+                button.setPosition(1000,1000);
+                inventory.setInventoryVisibility();
+            }
             inventory.display();
+
             
             SDL_RenderPresent(gRenderer);
         } 
