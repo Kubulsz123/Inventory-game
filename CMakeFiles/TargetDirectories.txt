@@ -1,3 +1,0 @@
-C:/Users/Adam/Desktop/Buckshot/Inventory-game/CMakeFiles/Inventory-Game.dir
-C:/Users/Adam/Desktop/Buckshot/Inventory-game/CMakeFiles/edit_cache.dir
-C:/Users/Adam/Desktop/Buckshot/Inventory-game/CMakeFiles/rebuild_cache.dir
