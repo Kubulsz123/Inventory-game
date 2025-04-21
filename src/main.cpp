@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 enum Types
@@ -59,6 +61,265 @@ class Item
             cout << "Price: " << price << endl;
             cout << "Type: " << type << endl;
         }
+
+        virtual void inspect()
+        {
+            cout << "Inspecting item: " << name << endl;
+            cout << "Price: " << price << endl;
+            cout << "Type: " << type << endl;
+        }
+};
+
+class Magnifying_Glass : public Item {
+    private:
+        string description;
+        string image_path;
+    public:
+        Magnifying_Glass() : Item("magnifying glass", 5, other) {
+            this->description = "A tool used to show if bullet in chamber is live or blank.";
+            this->image_path = "assets/magnifying_glass.png";
+        }
+
+        Magnifying_Glass(string name, int price, Types type, string image_path) : Item(name, price, type) {
+            this->description = "A tool used to show if bullet in chamber is live or blank.";
+            this->image_path = image_path;
+        }
+
+        void inspect() override {
+            cout << description << endl;
+        }
+
+        void setImagePath(string image_path) {
+            this->image_path = image_path;
+        }
+
+        string getImagePath() {
+            return image_path;
+        }
+};
+
+class Handsaw : public Item {
+    private:
+        string description;
+        string image_path;
+    public:
+        Handsaw() : Item("handsaw", 25, ofensive) {
+            this->description = "A tool used to saw output of shotgun so it would deal double damage.";
+            this->image_path = "assets/handsaw.png";
+        }
+
+        Handsaw(string name, int price, Types type, string image_path) : Item(name, price, type) {
+            this->description = "A tool used to saw output of shotgun so it would deal double damage.";
+            this->image_path = image_path;
+        }
+
+        void inspect() override {
+            cout << description << endl;
+        }
+
+        void setImagePath(string image_path) {
+            this->image_path = image_path;
+        }
+
+        string getImagePath() {
+            return image_path;
+        }
+};
+
+class Beer : public Item {
+    private:
+        string description;
+        string image_path;
+    public:
+        Beer() : Item("beer", 10, defensive) {
+            this->description = "Empty one bullet from chamber of shotgun.";
+            this->image_path = "assets/beer.png";
+        }
+
+        Beer(string name, int price, Types type, string image_path) : Item(name, price, type) {
+            this->description = "Empty one bullet from chamber of shotgun.";
+            this->image_path = image_path;
+        }
+
+        void inspect() override {
+            cout << description << endl;
+        }
+
+        void setImagePath(string image_path) {
+            this->image_path = image_path;
+        }
+
+        string getImagePath() {
+            return image_path;
+        }
+};
+
+class Handcuffs : public Item {
+    private:
+        string description;
+        string image_path;
+    public:
+        Handcuffs() : Item("handcuffs", 20, defensive) {
+            this->description = "Stops player for one turn (he cant do anything in his turn).";
+            this->image_path = "assets/handcuffs.png";
+        }
+
+        Handcuffs(string name, int price, Types type, string image_path) : Item(name, price, type) {
+            this->description = "Stops player for one turn (he cant do anything in his turn).";
+            this->image_path = image_path;
+        }
+
+        void inspect() override {
+            cout << description << endl;
+        }
+
+        void setImagePath(string image_path) {
+            this->image_path = image_path;
+        }
+
+        string getImagePath() {
+            return image_path;
+        }
+};
+
+class Vodka : public Item {
+    private:
+        string description;
+        string image_path;
+    public:
+        Vodka() : Item("vodka", 33, other) {
+            this->description = "Moves everyone inventories to one left and removes item - vodka.";
+            this->image_path = "assets/vodka.png";
+        }
+
+        Vodka(string name, int price, Types type, string image_path) : Item(name, price, type) {
+            this->description = "Moves everyone inventories to one left and removes item - vodka.";
+            this->image_path = image_path;
+        }
+
+        void inspect() override {
+            cout << description << endl;
+        }
+
+        void setImagePath(string image_path) {
+            this->image_path = image_path;
+        }
+
+        string getImagePath() {
+            return image_path;
+        }
+};
+
+class Sprite_Banana : public Item {
+    private:
+        string description;
+        string image_path;
+    public:
+        Sprite_Banana() : Item("sprite_banana", 75, other) {
+            this->description = "Removes items from all inventories and remove this item.";
+            this->image_path = "assets/sprite_banana.png";
+        }
+
+        Sprite_Banana(string name, int price, Types type, string image_path) : Item(name, price, type) {
+            this->description = "Removes items from all inventories and remove this item.";
+            this->image_path = image_path;
+        }
+
+        void inspect() override {
+            cout << description << endl;
+        }
+
+        void setImagePath(string image_path) {
+            this->image_path = image_path;
+        }
+
+        string getImagePath() {
+            return image_path;
+        }
+};
+
+class Uno_Reverse : public Item {
+    private:
+        string description;
+        string image_path;
+    public:
+        Uno_Reverse() : Item("uno_reverse", 32, other) {
+            this->description = "Swap two players inventories and remove this item.";
+            this->image_path = "assets/uno_reverse.png";
+        }
+
+        Uno_Reverse(string name, int price, Types type, string image_path) : Item(name, price, type) {
+            this->description = "Swap two players inventories and remove this item.";
+            this->image_path = image_path;
+        }
+
+        void inspect() override {
+            cout << description << endl;
+        }
+
+        void setImagePath(string image_path) {
+            this->image_path = image_path;
+        }
+
+        string getImagePath() {
+            return image_path;
+        }
+};
+
+class Adrenaline : public Item {
+    private:
+        string description;
+        string image_path;
+    public:
+        Adrenaline() : Item("adrenaline", 12, defensive) {
+            this->description = "Adds 2 lives to you for only one round in which you used it.";
+            this->image_path = "assets/adrenaline.png";
+        }
+
+        Adrenaline(string name, int price, Types type, string image_path) : Item(name, price, type) {
+            this->description = "Adds 2 lives to you for only one round in which you used it.";
+            this->image_path = image_path;
+        }
+
+        void inspect() override {
+            cout << description << endl;
+        }
+
+        void setImagePath(string image_path) {
+            this->image_path = image_path;
+        }
+
+        string getImagePath() {
+            return image_path;
+        }
+};
+
+class Cigarettes : public Item {
+    private:
+        string description;
+        string image_path;
+    public:
+        Cigarettes() : Item("cigarettes", 12, defensive) {
+            this->description = "Pernamently heal one life in game.";
+            this->image_path = "assets/cigarettes.png";
+        }
+
+        Cigarettes(string name, int price, Types type, string image_path) : Item(name, price, type) {
+            this->description = "Pernamently heal one life in game.";
+            this->image_path = image_path;
+        }
+
+        void inspect() override {
+            cout << description << endl;
+        }
+
+        void setImagePath(string image_path) {
+            this->image_path = image_path;
+        }
+
+        string getImagePath() {
+            return image_path;
+        }
 };
 
 class Inventory {
@@ -66,6 +327,7 @@ private:
     Item*** items;
     int rows;
     int cols;
+
 public:
     Inventory(int rows, int cols) : rows{rows}, cols{cols} {
         items = new Item**[rows];
@@ -77,6 +339,17 @@ public:
         }
     }
 
+    int getRows() {
+        return rows;
+    }
+
+    int getCols() {
+        return cols;
+    }
+
+    Item*** getItems() {
+        return items;
+    }
 
     void display() {
         for (int i = 0; i < rows; i++) {
@@ -95,33 +368,51 @@ public:
         cout << flush; // Make sure everything prints
     }
 
+    void displayDebug() {
+        cout << "Inventory Debug View:" << endl;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                cout << "[";
+                if (items[i][j] == nullptr) {
+                    cout << " ";
+                } else {
+                    cout << items[i][j]->getName();
+                }
+                cout << "]";
+            }
+            cout << endl;
+        }
+        cout << flush; // Ensure everything prints
+    }
 
     bool addItem(Item* item) {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (items[i][j] == nullptr) {
                     items[i][j] = item;
+                    cout << "Added item: " << item->getName() << " to position (" << i << ", " << j << ")" << endl;
                     return true;
                 }
             }
         }
-        return false;
+        cout << "Inventory is full! Could not add item: " << item->getName() << endl;
+        return false; // Inventory is full
     }
 
     bool removeItem(int row, int col) {
         if ((row >= rows || row < 0) || (col < 0 || col >= cols)) {
+            cout << "Invalid position for removal!" << endl;
             return false;
         }
         if (items[row][col] == nullptr) {
+            cout << "No item to remove at position (" << row << ", " << col << ")!" << endl;
             return false;
-        }
-        else {
+        } else {
+            cout << "Removing item: " << items[row][col]->getName() << " from position (" << row << ", " << col << ")" << endl;
             delete items[row][col];
-            items[row][col] = nullptr;
-
+            items[row][col] = nullptr; // Set to nullptr after deletion
             return true;
         }
-        
     }
 
     int getInventoryValue() {
@@ -151,8 +442,45 @@ public:
 
     void inspect(Item* item) {
         if (item != nullptr) {
-            cout << "Inspecting item: " << item->getName() << endl;
-            item->display();
+            if (item->getName() == "magnifying glass") {
+                cout << "Inspecting item: " << item->getName() << endl;
+                item->inspect();
+            }
+            else if (item->getName() == "beer") {
+                cout << "Inspecting item: " << item->getName() << endl;
+                item->inspect();
+            }
+            else if (item->getName() == "handcuffs") {
+                cout << "Inspecting item: " << item->getName() << endl;
+                item->inspect();
+            }
+            else if (item->getName() == "vodka") {
+                cout << "Inspecting item: " << item->getName() << endl;
+                item->inspect();
+            }
+            else if (item->getName() == "sprite_banana") {
+                cout << "Inspecting item: " << item->getName() << endl;
+                item->inspect();
+            }
+            else if (item->getName() == "uno_reverse") {
+                cout << "Inspecting item: " << item->getName() << endl;
+                item->inspect();
+            }
+            else if (item->getName() == "adrenaline") {
+                cout << "Inspecting item: " << item->getName() << endl;
+                item->inspect();
+            }
+            else if (item->getName() == "cigarettes") {
+                cout << "Inspecting item: " << item->getName() << endl;
+                item->inspect();
+            }
+            else if (item->getName() == "handsaw") {
+                cout << "Inspecting item: " << item->getName() << endl;
+                item->inspect();
+            } else {
+                cout << "Inspecting item: " << item->getName() << endl;
+                item->display();
+            }
         } else {
             cout << "Item not found!" << endl;
         }
@@ -247,11 +575,9 @@ public:
         
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                if (items[i][j] != nullptr && items[i][j]->getName()[0] == input) {
+                if (items[i][j] != nullptr && !items[i][j]->getName().empty() && items[i][j]->getName()[0] == input) {
                     cout << "Item found: " << items[i][j]->getName() << endl;
-                    if (items[i][j] != nullptr) {
-                        items[i][j]->display();
-                    }
+                    items[i][j]->display();
                     founded = true;
                 }
             }
@@ -321,20 +647,225 @@ public:
     }
 };
 
+class Player
+{
+    private:
+        string name;
+        int gold;
+        int health;
+        Inventory* inventory;
+    public:
+        
+
+        Player() = delete;
+        Player(string name)
+        {
+            this->name = name;
+            this->gold = 0;
+            this->health = 5;
+            this->inventory = new Inventory(2,4);
+        }
+        int getHealth()
+        {
+            return this->health;
+        }
+        void setHealth(int health)
+        {
+            this->health = health;
+        }
+        string getName()
+        {
+            return this->name;
+        }
+        void setName(string name)
+        {
+            this->name = name;
+        }
+        int getGold()
+        {
+            return this->gold;
+        }
+        void setGold(int gold)
+        {
+            this->gold = gold;
+        }
+        Inventory* getInventory()
+        {
+            return inventory;
+        }
+        void display()
+        {
+            cout << "Player: " << name << ", Health: " << health << endl;
+        }
+};
+
+class Bullet {
+    public:
+        virtual bool isLive() = 0;
+        virtual ~Bullet() = default;
+};
+
+class LiveBullet : public Bullet {
+public:
+    bool isLive() override {
+        return true;
+    }
+};
+
+class BlankBullet : public Bullet {
+public:
+    bool isLive() override {
+        return false;
+    }
+};
+
+class Shotgun {
+private:
+    vector<Bullet*> chamber;
+
+public:
+    Shotgun() {
+        srand(static_cast<unsigned>(time(0)));
+        for (int i = 0; i < 5; ++i) {
+            if (rand() % 2 == 0) {
+                chamber.push_back(new LiveBullet());
+            } else {
+                chamber.push_back(new BlankBullet());
+            }
+        }
+    }
+
+    ~Shotgun() {
+        for (Bullet* bullet : chamber) {
+            delete bullet;
+        }
+    }
+
+    void shoot(Player* target) {
+        if (chamber.empty()) {
+            cout << "The shotgun is empty!" << endl;
+            return;
+        }
+
+        Bullet* bullet = chamber.back();
+        chamber.pop_back();
+
+        if (bullet->isLive()) {
+            target->setHealth(target->getHealth() - 1);
+            cout << "Bang! " << target->getName() << " was hit and lost 1 health!" << endl;
+        } else {
+            cout << "Click! It was a blank bullet. " << target->getName() << " is unharmed." << endl;
+        }
+
+        delete bullet;
+    }
+};
+
+class Merchant {
+    private:
+        vector<Item*> merchant_items;
+    public:
+    Merchant(vector<Item*> allItems) {
+        srand(time(0));
+
+        while (merchant_items.size() < 3 && !allItems.empty()) {
+            int randIndex = rand() % allItems.size();
+            if (randIndex >= 0 && randIndex < allItems.size()) {
+                merchant_items.push_back(allItems[randIndex]);
+                allItems.erase(allItems.begin() + randIndex);
+            }
+        }
+    }
+
+    void displayItems() {
+        cout << "Merchant's items:" << endl;
+        for (int i = 0; i < merchant_items.size(); i++) {
+            cout << i + 1 << ". " << merchant_items[i]->getName() << " - Price: " << merchant_items[i]->getPrice() << endl;
+
+        }
+    }
+
+    void buyItem(Player* player) {
+        displayItems();
+        cout << "Your gold: " << player->getGold() << endl;
+        cout << "Enter the number of the item you want to buy: ";
+        int choice;
+        cin >> choice;
+
+        if (choice < 1 || choice > merchant_items.size()) {
+            cout << "Index out of range!" << endl;
+            return;
+        }
+
+        Item* selectedItem = merchant_items[choice - 1];
+
+        if (player->getGold() < selectedItem->getPrice()) {
+            cout << "Not enough gold!" << endl;
+            return;
+        }
+
+        if (player->getInventory()->addItem(selectedItem)) {
+            player->setGold(player->getGold() - selectedItem->getPrice());
+            cout << "You bought " << selectedItem->getName() << "!" << endl;
+        } else {
+            cout << "Inventory is full!" << endl;
+        }
+    }
+
+    void sellItem(Player* player) {
+        cout << "Your Inventory:" << endl;
+        player->getInventory()->displayDebug(); // Debugging output
+        cout << "Enter the row and column of the item you want to sell (e.g., 0 1): ";
+        int row, col;
+        cin >> row >> col;
+
+        if (row < 0 || row >= player->getInventory()->getRows() || col < 0 || col >= player->getInventory()->getCols()) {
+            cout << "Invalid position!" << endl;
+            return;
+        }
+
+        Item* itemToSell = player->getInventory()->getItems()[row][col];
+        if (itemToSell == nullptr) {
+            cout << "No item found at the given position!" << endl;
+            return;
+        }
+
+        int sellPrice = itemToSell->getPrice() / 2; // Selling price is half the item's price
+        player->setGold(player->getGold() + sellPrice);
+
+        // Remove the item from the inventory
+        if (player->getInventory()->removeItem(row, col)) {
+            cout << "You sold the item for " << sellPrice << " gold!" << endl;
+        } else {
+            cout << "Failed to remove the item from the inventory!" << endl;
+        }
+
+        player->getInventory()->displayDebug(); // Debugging output after removal
+    }
+};
+
 int main() {
 
-    Inventory inventory(4, 2);
-    Item* shotgun = new Item("shotgun", 100, defensive);
-    Item* pistol = new Item("pistol", 50, defensive);
-    Item* coin = new Item("coin", 1, other);
-    Item* sword = new Item("sword", 150, ofensive);
+    // Player player("John");
 
-    inventory.addItem(shotgun);
-    inventory.addItem(pistol);
-    inventory.addItem(coin);
-    inventory.addItem(sword);
+    // Inventory inventory(2, 4);
+    // Item* shotgun = new Item("shotgun", 100, defensive);
+    // Item* pistol = new Item("pistol", 50, defensive);
+    // Item* coin = new Item("coin", 1, other);
+    // Item* sword = new Item("sword", 150, ofensive);
+    // Magnifying_Glass* magnifyingGlass = new Magnifying_Glass();
 
-    inventory.display();
+    // player.getInventory()->addItem(shotgun);
+    // player.getInventory()->addItem(pistol);
+    // player.getInventory()->addItem(coin);
+    // player.getInventory()->addItem(sword);
+    // player.getInventory()->addItem(magnifyingGlass);
+
+    // player.getInventory()->display();
+
+    // player.getInventory()->displayDebug();
+    // player.getInventory()->removeItem(0, 0);
+    // player.getInventory()->displayDebug();
 
     // // Test the inspect function
     // cout << endl;
@@ -382,38 +913,99 @@ int main() {
     // cin >> input;
     // inventory.filter(input);
 
-    int currency_amount = 155; // Example of currency. You can change it later on
-    int expansionCost = 50; // Cost to expand the inventory. You can change it later on
-    int upgrades = 0; // Number of upgrades performed
+    // int currency_amount = 155; // Example of currency. You can change it later on
+    // int expansionCost = 50; // Cost to expand the inventory. You can change it later on
+    // int upgrades = 0; // Number of upgrades performed
 
-    // Test the expand function
-    cout << "Current currency: " << currency_amount << endl;
-    if (inventory.expand(currency_amount, expansionCost, upgrades)) {
-        cout << "Expansion successful!" << endl;
-    } else {
-        cout << "Expansion failed!" << endl;
-    }
+    // // Test the expand function
+    // cout << "Current currency: " << currency_amount << endl;
+    // if (inventory.expand(currency_amount, expansionCost, upgrades)) {
+    //     cout << "Expansion successful!" << endl;
+    // } else {
+    //     cout << "Expansion failed!" << endl;
+    // }
 
-    inventory.display();
+    // inventory.display();
 
-    if (inventory.expand(currency_amount, expansionCost, upgrades)) {
-        cout << "Expansion successful!" << endl;
-    } else {
-        cout << "Expansion failed!" << endl;
-    }
+    // if (inventory.expand(currency_amount, expansionCost, upgrades)) {
+    //     cout << "Expansion successful!" << endl;
+    // } else {
+    //     cout << "Expansion failed!" << endl;
+    // }
 
-    inventory.display();
+    // inventory.display();
 
-    if (inventory.expand(currency_amount, expansionCost, upgrades)) {
-        cout << "Expansion successful!" << endl;
-    } else {
-        cout << "Expansion failed!" << endl;
-    }
+    // if (inventory.expand(currency_amount, expansionCost, upgrades)) {
+    //     cout << "Expansion successful!" << endl;
+    // } else {
+    //     cout << "Expansion failed!" << endl;
+    // }
 
-    cout << "Remaining currency: " << currency_amount << endl;
-    inventory.display();
+    // cout << "Remaining currency: " << currency_amount << endl;
+    // inventory.display();
 
-    return 0;
+    // // Test the inspect function with the Magnifying Glass
+    // cout << endl;
+    // inventory.inspect(magnifyingGlass);
+    // inventory.inspect(shotgun);
+
+    // // Create a vector of all available items
+    // vector<Item*> allItems = {
+    //     new Magnifying_Glass(),
+    //     new Handsaw(),
+    //     new Beer(),
+    //     new Handcuffs(),
+    //     new Vodka(),
+    //     new Sprite_Banana(),
+    //     new Uno_Reverse(),
+    //     new Adrenaline(),
+    //     new Cigarettes()
+    // };
+
+    // player.setGold(100); // Give the player some starting gold
+
+    // Merchant merchant(allItems);
+
+    // cout << "Welcome to the Merchant!" << endl;
+    // cout << "1. Buy an item" << endl;
+    // cout << "2. Sell an item" << endl;
+    // cout << "Enter your choice: ";
+    // int choice;
+    // cin >> choice;
+
+    // if (choice == 1) {
+    //     merchant.buyItem(&player);
+    // } else if (choice == 2) {
+    //     merchant.sellItem(&player);
+    // } else {
+    //     cout << "Invalid choice!" << endl;
+    // }
+
+    // player.getInventory()->display();
+
+    // // Clean up dynamically allocated memory
+    // for (Item* item : allItems) {
+    //     delete item;
+    // }
+
+    Player player1("John");
+    Player player2("Jane");
+
+    Shotgun shotgun;
+
+    cout << "Initial player states:" << endl;
+    player1.display();
+    player2.display();
+
+    cout << "\nJohn shoots himself:" << endl;
+    shotgun.shoot(&player1);
+
+    cout << "\nJane shoots John:" << endl;
+    shotgun.shoot(&player1);
+
+    cout << "\nFinal player states:" << endl;
+    player1.display();
+    player2.display();
 
     return 0;
 }
