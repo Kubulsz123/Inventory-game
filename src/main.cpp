@@ -741,7 +741,41 @@ public:
         }
     }
 
-    void shoot(Player* target) {
+    void displayChamber() {
+        cout << "Shotgun chamber state: ";
+        for (size_t i = 0; i < chamber.size(); ++i) {
+            if (chamber[i]->isLive()) {
+                cout << "[Live]";
+            } else {
+                cout << "[Blank]";
+            }
+            if (i < chamber.size() - 1) {
+                cout << " -> ";
+            }
+        }
+        cout << endl;
+    }
+
+    void shootSelf(Player* player) {
+        if (chamber.empty()) {
+            cout << "The shotgun is empty!" << endl;
+            return;
+        }
+
+        Bullet* bullet = chamber.back();
+        chamber.pop_back();
+
+        if (bullet->isLive()) {
+            player->setHealth(player->getHealth() - 1);
+            cout << "Bang! " << player->getName() << " shot themselves and lost 1 health!" << endl;
+        } else {
+            cout << "Click! It was a blank bullet. " << player->getName() << " is unharmed." << endl;
+        }
+
+        delete bullet;
+    }
+
+    void shootOther(Player* shooter, Player* target) {
         if (chamber.empty()) {
             cout << "The shotgun is empty!" << endl;
             return;
@@ -752,7 +786,7 @@ public:
 
         if (bullet->isLive()) {
             target->setHealth(target->getHealth() - 1);
-            cout << "Bang! " << target->getName() << " was hit and lost 1 health!" << endl;
+            cout << "Bang! " << shooter->getName() << " shot " << target->getName() << " and they lost 1 health!" << endl;
         } else {
             cout << "Click! It was a blank bullet. " << target->getName() << " is unharmed." << endl;
         }
@@ -997,11 +1031,20 @@ int main() {
     player1.display();
     player2.display();
 
+    cout << "\nInitial shotgun chamber:" << endl;
+    shotgun.displayChamber();
+
     cout << "\nJohn shoots himself:" << endl;
-    shotgun.shoot(&player1);
+    shotgun.shootSelf(&player1);
+
+    cout << "\nShotgun chamber after John shoots himself:" << endl;
+    shotgun.displayChamber();
 
     cout << "\nJane shoots John:" << endl;
-    shotgun.shoot(&player1);
+    shotgun.shootOther(&player2, &player1);
+
+    cout << "\nShotgun chamber after Jane shoots John:" << endl;
+    shotgun.displayChamber();
 
     cout << "\nFinal player states:" << endl;
     player1.display();
