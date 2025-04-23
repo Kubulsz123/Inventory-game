@@ -7,6 +7,7 @@
 #include "Globals.hpp"
 #include "inventory.hpp"
 #include "items.hpp"
+#include "texture.hpp"
 
 #ifndef player_hpp
 #define player_hpp
@@ -21,13 +22,19 @@ class Player
         int health;
         Inventory* inventory;
     public:
+        Texture nameText;
+        Texture healthText;
+        Texture coinText;
+        bool nameVisibly = true;
+        bool dirty = true;
+
         Player() = delete;
         Player(string name)
         {
             this->name = name;
             this->gold = 0;
             this->health = 5;
-            this->inventory = new Inventory(2,4);
+            this->inventory = new Inventory(3,2);
         }
         int getHealth()
         {
@@ -51,11 +58,15 @@ class Player
         }
         void setGold(int gold)
         {
-            this->gold = gold;
+            this->gold = this->gold + gold;
+        }
+        Inventory* getInventory()
+        {
+            return inventory;
         }
         void display()
         {
-            cout << "Name: " << name << " ";
+            cout << "Player: " << name << ", Health: " << health << endl;
         }
 };
 
