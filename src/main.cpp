@@ -15,7 +15,7 @@
 #include "items.hpp"
 #include "shotgun.hpp"
 #include "button.cpp"
-//#include "shop.hpp"
+#include "shop.hpp"
 #include "player.hpp"
 
 using namespace std;
@@ -196,6 +196,7 @@ int main(int argc, char* args[])
     else
     {
         bool loaded = false;
+
         //turn meter
         int currentTurn = 0;
         Texture currentTurnText;
@@ -206,6 +207,8 @@ int main(int argc, char* args[])
         Shotgun shotgun;
         Button shotgunButt(140,50);
         shotgunButt.setPosition(365.f,340.f);
+
+        Texture shotgunPNG;
 
         Button shoot(100,50);
         shoot.setLabel("Shoot",{0x00, 0x00, 0x00, 0xFF});
@@ -258,9 +261,33 @@ int main(int argc, char* args[])
         bool shootVisible = false;
         bool targetSelection = false;
 
+        float angle = 0.0f;
+
+        Magnifying_Glass glass("Magnyfying glass",5,defensive,"assets/magnifying-glass.png");
+        Handsaw handsaw("Handsaw",5,ofensive,"assets/handsaw.png");
+        Beer beer("Beer",5,defensive,"assets/beer.png");
+        Handcuffs handcuffs("Handcuffs",5,ofensive,"assets/handcuffs.png");
+        Vodka vodka("Vodka",5,other,"assets/vodka.png");
+        Sprite_Banana sprite_Banana("Sprite banana",10,other,"assets/sprite_banana.png");
+        Uno_Reverse uno_Reverse("Uno reverse",10,other,"assets/uno_reverse.png");
+        Adrenaline adrenaline("Adrenaline",10,defensive,"assets/adrenaline.png");
+        Cigarettes cigarettes("Cigarettes",5,defensive,"assets/cigarettes.png");
+
+        vector<Item*> items;
+        items.push_back(new Magnifying_Glass("Magnyfying glass",5,defensive,"assets/magnifying-glass.png"));
+        items.push_back(new Handsaw("Handsaw",5,ofensive,"assets/handsaw.png"));
+        items.push_back(new Beer("Beer",5,defensive,"assets/beer.png"));
+        items.push_back(new Handcuffs("Handcuffs",5,ofensive,"assets/handcuffs.png"));
+        items.push_back(new Vodka("Vodka",5,other,"assets/vodka.png"));
+        items.push_back(new Sprite_Banana("Sprite banana",10,other,"assets/sprite_banana.png"));
+        items.push_back(new Uno_Reverse("Uno reverse",10,other,"assets/uno_reverse.png"));
+        items.push_back(new Adrenaline("Adrenaline",10,defensive,"assets/adrenaline.png"));
+        items.push_back(new Cigarettes("Cigarettes",5,defensive,"assets/cigarettes.png"));
+        Merchant merchant(items);
+
         if(!loaded)
         {
-            shotgunButt.setLabelAsPNG("assets/shotgun.png");
+            shotgunPNG.loadFromFile("assets/shotgun.png");
             title.loadFromRenderedText("Homeshot Roulette",textColor);
             optionsPlayers.loadFromRenderedText("Select number of Players:",textColor);
             tempGuide.loadFromRenderedText("Temp Guide",textColor);
@@ -275,7 +302,7 @@ int main(int argc, char* args[])
         bool guideVisible = false;
         bool start = true;
         bool menuVisible = true;
-        bool textUndShotgun = false;
+        bool shotgunVisible = true;
 
         SDL_Event e;
         SDL_zero(e);
@@ -550,7 +577,6 @@ int main(int argc, char* args[])
                 menuVisible = false;
                 float tempXpositon = 10.f;
                 float tempYposition = 10.f;
-
                 if(selectedPlayers == 4)
                 {
                     for(int i = 0;i < players.size(); i++)
@@ -610,20 +636,18 @@ int main(int argc, char* args[])
                         }
                     }
                 }
-                //if(selectedPlayers == 3)
-                //{}
-                //if(selectedPlayers == 2)
-                //{}
-                //if(selectedPlayers == 1)
-                //{}
-                shotgunButt.render();
+                if(shotgunVisible)
+                {
+                    shotgunButt.render();
+                    shotgunPNG.render(365.f,350.f,nullptr,angle);
+                }
                 if (!players.empty()) 
                 {
                     string turnText = players[currentTurn]->getName() + "'s Turn";
                     currentTurnText.loadFromRenderedText(turnText.c_str(), {0x00, 0x00, 0x00, 0xFF});
                     currentTurnText.render(10.f,340.f);
                 }
-                if (shotgunButt.ifClicked() && !shown && !shootVisible && !targetSelection) {
+                if (shotgunButt.ifClicked() && !shown && !shootVisible && !targetSelection && !shotgun.getChamber().empty()) {
                     shootVisible = true;
                     shoot.isActive = true;
                     shoot.setPosition(shotgunButt.getPositionX() + 160.f, shotgunButt.getPositionY());
@@ -669,6 +693,7 @@ int main(int argc, char* args[])
                     {
                         int tempHealth = players[currentTurn]->getHealth();
                         shotgun.shootSelf(players[currentTurn]);
+
                         if(tempHealth != players[currentTurn]->getHealth())
                         {
                             if(currentTurn == 3)
@@ -702,7 +727,7 @@ int main(int argc, char* args[])
                         players[i]->dirty = true;
                     }
                     targetSelection = false;
-                    textUndShotgun = true;
+                    angle = 245.f;
                 }
                 if (Player2Name.ifClicked()) {
                     SDL_Log("Player 2 targeted!");
@@ -742,7 +767,7 @@ int main(int argc, char* args[])
                     {
                         players[i]->dirty = true;
                     }
-                    textUndShotgun = true;
+                    angle = 325.f;
                     targetSelection = false;
                 }
                 if (Player3Name.ifClicked()) {
@@ -783,7 +808,7 @@ int main(int argc, char* args[])
                     {
                         players[i]->dirty = true;
                     }
-                    textUndShotgun = true;
+                    angle = 145.f;
                     targetSelection = false;
                 }
                 if (Player4Name.ifClicked()) {
@@ -824,14 +849,9 @@ int main(int argc, char* args[])
                     {
                         players[i]->dirty = true;
                     }
-
+                    angle = 45.f;
                     targetSelection = false;
-                    textUndShotgun = true;
                 }
-            }
-            if(textUndShotgun)
-            {
-                shotgun.getText().render(365.f,400.f);
             }
             if(shown)
             {
@@ -842,7 +862,10 @@ int main(int argc, char* args[])
                     shotgun.sortBullets();
                 }
             }
-
+            if(shotgun.getChamber().empty())
+            {
+                shotgunVisible = false;
+            }
             SDL_RenderPresent(gRenderer);
 
             //Cap frame rate

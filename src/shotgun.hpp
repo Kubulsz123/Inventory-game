@@ -61,7 +61,6 @@ class Shotgun {
         vector<Bullet*> chamber;
         Texture shotgun;
         string pathfile = "assets/shotgun.png";
-        Texture text;
 
     public:
         Shotgun() {
@@ -76,11 +75,10 @@ class Shotgun {
             shotgun.loadFromFile(pathfile);
         }
 
-        Texture getText()
+        const vector<Bullet*>& getChamber() const
         {
-            return text;
+            return chamber;
         }
-        
         void sortBullets() 
         {
             for (int i = 0; i < chamber.size(); ++i) 
@@ -122,7 +120,7 @@ class Shotgun {
             for (int i = 0; i < chamber.size(); ++i) 
             {
                 chamber[i]->bullet.setSize(25,25);
-                chamber[i]->bullet.render(x,360.f);
+                chamber[i]->bullet.render(x,360.f,nullptr,270.f);
                 x = x + 40.f;
             }
         }
@@ -138,9 +136,7 @@ class Shotgun {
     
             if (bullet->isLive()) {
                 player->setHealth(player->getHealth() - 1);
-                text.loadFromRenderedText("Self fire!",{0x00, 0x00, 0x00, 0xFF});
             } else {
-                text.loadFromRenderedText("Click",{0x00, 0x00, 0x00, 0xFF});
                 player->setGold(1);
             }
     
@@ -158,15 +154,13 @@ class Shotgun {
     
             if (bullet->isLive()) {
                 target->setHealth(target->getHealth() - 1);
-                text.loadFromRenderedText("Bang",{0x00, 0x00, 0x00, 0xFF});
                 shooter->setGold(1);
-            } else {
-                text.loadFromRenderedText("Click",{0x00, 0x00, 0x00, 0xFF});
             }
     
             delete bullet;
             return true;
         }
+    
 };
 
 #endif

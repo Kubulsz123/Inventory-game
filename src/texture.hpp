@@ -113,7 +113,7 @@ class Texture
             SDL_SetTextureColorMod(mTexture, r, g, b);
         }
 
-        void render(float x, float y, SDL_FRect* clip = nullptr)
+        void render(float x, float y, SDL_FRect* clip = nullptr, float angle = 0.0f)
         {
             //Set texture position
             SDL_FRect dstRect = {x, y, static_cast<float>(this->mWidth), static_cast<float>(this->mHeight)};
@@ -131,7 +131,10 @@ class Texture
             {
                 dstRect.h = mHeight;
             }
-            SDL_RenderTexture(gRenderer,mTexture,clip,&dstRect);
+
+            SDL_FPoint center = {dstRect.w / 2.0f, dstRect.h / 2.0f};
+
+            SDL_RenderTextureRotated(gRenderer,mTexture,clip,&dstRect,angle, &center, SDL_FLIP_NONE);
         }
 
         int getWidth()

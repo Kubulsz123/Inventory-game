@@ -237,4 +237,5 @@ CMakeFiles/Inventory-Game.dir/src/main.cpp.obj: \
  C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\items.hpp \
  C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\shotgun.hpp \
  C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\player.hpp \
- C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\button.cpp
+ C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\button.cpp \
+ C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\shop.hpp

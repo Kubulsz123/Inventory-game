@@ -21,6 +21,7 @@ class Player
         int gold;
         int health;
         Inventory* inventory;
+        bool adrenalineActive = false;
     public:
         Texture nameText;
         Texture healthText;

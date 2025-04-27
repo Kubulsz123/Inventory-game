@@ -50,6 +50,18 @@ class Inventory {
         {
             return inventoryVisible;
         }
+        int getRows() const 
+        { 
+            return rows; 
+        }
+        int getCols() const 
+        { 
+            return cols; 
+        }
+        Item* getItem(int row, int col) 
+        { 
+            return items[row][col]; 
+        }
     
         void display(float xPosition, float yPosition) 
         {

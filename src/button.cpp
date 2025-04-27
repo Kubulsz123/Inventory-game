@@ -57,6 +57,14 @@ class Button
         {
             return position.x;
         }
+        float getWidth() const 
+        { 
+            return kButtonWidth; 
+        }
+        float getHeight() const 
+        { 
+            return kButtonHeight; 
+        }
 
         bool ifClicked()
         {

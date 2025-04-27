@@ -245,6 +245,7 @@ CMakeFiles/Inventory-Game.dir/src/main.cpp.obj: src/main.cpp \
   src/inventory.hpp \
   src/items.hpp \
   src/player.hpp \
+  src/shop.hpp \
   src/shotgun.hpp \
   src/texture.hpp
 
@@ -736,6 +737,8 @@ src/inventory.hpp:
 src/items.hpp:
 
 src/player.hpp:
+
+src/shop.hpp:
 
 src/shotgun.hpp:
 
