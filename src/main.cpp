@@ -463,6 +463,17 @@ int main(int argc, char* args[])
                 if(invButtonWork)
                 {
                     players[currentTurn]->getInventory()->handleSlotButtonsEvent(&e);
+                    if(!merchantBreak)
+                    {
+                        players[currentTurn]->getInventory()->handleInspectUseEvent(&e);
+                        players[currentTurn]->getInventory()->handleItemClick(&e);
+                        if (e.type == SDL_EVENT_KEY_DOWN) {
+                            if (e.key.key == SDLK_ESCAPE) {
+                                // Call the method to handle Escape key press
+                                players[currentTurn]->getInventory()->handleEscape(&e);  // Assuming players[currentTurn] is the current player
+                            }
+                        }
+                    }
                 }   
                 //if(merchantBreak)
                 //{
@@ -801,12 +812,14 @@ int main(int argc, char* args[])
 
                         if(tempHealth != players[currentTurn]->getHealth())
                         {
+                            players[currentTurn]->getInventory()->hideInspectUseButtons();
                             advanceTurn(players, currentTurn);
                         }
                     }
                     else
                     {
                         shotgun.shootOther(players[currentTurn],players[0]);
+                        players[currentTurn]->getInventory()->hideInspectUseButtons();
                         advanceTurn(players, currentTurn);
                     }
                     for(int i = 0; i < players.size(); i++)
@@ -828,12 +841,14 @@ int main(int argc, char* args[])
                         shotgun.shootSelf(players[currentTurn]);
                         if(tempHealth != players[currentTurn]->getHealth())
                         {
+                            players[currentTurn]->getInventory()->hideInspectUseButtons();
                             advanceTurn(players, currentTurn);
                         }
                     }
                     else
                     {
                         shotgun.shootOther(players[currentTurn],players[1]);
+                        players[currentTurn]->getInventory()->hideInspectUseButtons();
                         advanceTurn(players, currentTurn);
                     }
                     for(int i = 0; i < players.size(); i++)
@@ -855,12 +870,14 @@ int main(int argc, char* args[])
                         shotgun.shootSelf(players[currentTurn]);
                         if(tempHealth != players[currentTurn]->getHealth())
                         {
+                            players[currentTurn]->getInventory()->hideInspectUseButtons();
                             advanceTurn(players, currentTurn);
                         }
                     }
                     else
                     {
                         shotgun.shootOther(players[currentTurn],players[2]);
+                        players[currentTurn]->getInventory()->hideInspectUseButtons();
                         advanceTurn(players, currentTurn);
                     }
                     for(int i = 0; i < players.size(); i++)
@@ -882,12 +899,14 @@ int main(int argc, char* args[])
                         shotgun.shootSelf(players[currentTurn]);
                         if(tempHealth != players[currentTurn]->getHealth())
                         {
+                            players[currentTurn]->getInventory()->hideInspectUseButtons();
                             advanceTurn(players, currentTurn);
                         }
                     }
                     else
                     {
                         shotgun.shootOther(players[currentTurn],players[3]);
+                        players[currentTurn]->getInventory()->hideInspectUseButtons();
                         advanceTurn(players, currentTurn);
                     }
                     for(int i = 0; i < players.size(); i++)

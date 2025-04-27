@@ -30,6 +30,9 @@ class Inventory {
         int cols;
         Button*** slotButtons;
         bool inventoryVisible = true;
+        Button* inspectButton;  // Button for inspecting item
+        Button* useButton;      // Button for using item
+        Item* selectedItem = nullptr;  // Currently selected item for inspection/use
     public:
         Inventory(int rows, int cols) : rows{rows}, cols{cols} 
         {
@@ -51,6 +54,13 @@ class Inventory {
                     slotButtons[i][j] = new Button(64,64); 
                 }
             }
+             // Initialize the inspect and use buttons (hidden by default)
+            inspectButton = new Button(100, 50);  // Size of button (you can adjust this)
+            useButton = new Button(100, 50);
+            inspectButton->setLabel("Inspect");
+            useButton->setLabel("Use");
+            inspectButton->isActive = false; // Initially not active
+            useButton->isActive = false;     // Initially not active
         }
         
         void setInventoryVisibility()
@@ -347,30 +357,6 @@ class Inventory {
         {
             return slotButtons;
         }
-
-        void renderSlotButtons(float xPosition, float yPosition)
-        {
-            float startX = xPosition;
-            for (int i = 0; i < rows; i++)
-            {
-                float tempX = startX;
-                for (int j = 0; j < cols; j++)
-                {
-                    if (slotButtons[i][j] != nullptr && slotButtons[i][j]->isActive)
-                    {
-                        slotButtons[i][j]->setPosition(tempX, yPosition);
-                        if(items[i][j] != nullptr)
-                        {
-                            slotButtons[i][j]->setLabelAsPNG(items[i][j]->getPath());
-                        }
-                        slotButtons[i][j]->render();
-                    }
-                    tempX += 100.f;
-                }
-                yPosition += 100.f;
-            }
-        }
-
         void handleSlotButtonsEvent(SDL_Event* e)
         {
             for (int i = 0; i < rows; i++)
@@ -382,6 +368,13 @@ class Inventory {
                         slotButtons[i][j]->handleEvent(e);
                     }
                 }
+            }
+        }
+
+        void handleEscape(SDL_Event* e) {
+            // Check if the escape key was pressed
+            if (e->type == SDL_EVENT_KEY_DOWN && e->key.key == SDLK_ESCAPE) {
+                hideInspectUseButtons();  // Hide or deactivate the buttons
             }
         }
 
@@ -401,6 +394,84 @@ class Inventory {
                 }
                 yPosition += 100.f;
             }
+        }
+        
+        // Handle item click to display Inspect/Use box
+        void handleItemClick(SDL_Event* e) {
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    if (slotButtons[i][j] != nullptr && slotButtons[i][j]->isActive) {
+                        if (slotButtons[i][j]->ifClicked()) {
+                            selectedItem = items[i][j];
+                            if (selectedItem != nullptr) {
+                                // Position buttons near the clicked item
+                                float xPosition = slotButtons[i][j]->getPositionX() + 70; // Adjust for position
+                                float yPosition = slotButtons[i][j]->getPositionY();
+                                inspectButton->setPosition(xPosition, yPosition);
+                                useButton->setPosition(xPosition, yPosition + 60);  // Place below Inspect button
+
+                                // Set the buttons active for interaction
+                                inspectButton->isActive = true;
+                                useButton->isActive = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Render Inspect/Use buttons when an item is selected
+        void renderInspectUseButtons() {
+            if (inspectButton->isActive) {
+                inspectButton->render();
+            }
+            if (useButton->isActive) {
+                useButton->render();
+            }
+        }
+
+        // Handle events for the Inspect/Use buttons
+        void handleInspectUseEvent(SDL_Event* e) {
+            if (inspectButton->isActive && inspectButton->ifClicked()) {
+                if (selectedItem != nullptr) {
+                    inspect(selectedItem);
+                }
+            }
+
+            if (useButton->isActive && useButton->ifClicked()) {
+                if (selectedItem != nullptr) {
+                    use(selectedItem);
+                }
+            }
+        }
+
+        // Modify the main render function to include Inspect/Use button rendering
+        void renderSlotButtons(float xPosition, float yPosition) {
+            float startX = xPosition;
+            for (int i = 0; i < rows; i++) {
+                float tempX = startX;
+                for (int j = 0; j < cols; j++) {
+                    if (slotButtons[i][j] != nullptr && slotButtons[i][j]->isActive) {
+                        slotButtons[i][j]->setPosition(tempX, yPosition);
+                        if (items[i][j] != nullptr) {
+                            slotButtons[i][j]->setLabelAsPNG(items[i][j]->getPath());
+                        }
+                        slotButtons[i][j]->render();
+                    }
+                    tempX += 100.f;
+                }
+                yPosition += 100.f;
+            }
+
+            // Render the Inspect/Use buttons
+            renderInspectUseButtons();
+        }
+
+        // Function to hide the Inspect/Use buttons when necessary
+        void hideInspectUseButtons() {
+            inspectButton->isActive = false;
+            useButton->isActive = false;
+            selectedItem = nullptr;  // Reset selected item
         }
 };
 #endif
