@@ -11,6 +11,7 @@
 
 #include "items.hpp"
 #include "Globals.hpp"
+#include "button.cpp"
 #include "texture.hpp"
 
 #ifndef inventory_hpp
@@ -27,6 +28,7 @@ class Inventory {
         Item*** items;
         int rows;
         int cols;
+        Button*** slotButtons;
         bool inventoryVisible = true;
     public:
         Inventory(int rows, int cols) : rows{rows}, cols{cols} 
@@ -37,6 +39,16 @@ class Inventory {
                 for (int j = 0; j < cols; j++) 
                 {
                     items[i][j] = nullptr; 
+                }
+            }
+
+            // Initialize buttons for each slot
+            slotButtons = new Button**[rows];
+            for (int i = 0; i < rows; i++) {
+                slotButtons[i] = new Button*[cols];
+                for (int j = 0; j < cols; j++) 
+                {
+                    slotButtons[i][j] = new Button(64,64); 
                 }
             }
         }
@@ -62,53 +74,7 @@ class Inventory {
         { 
             return items[row][col]; 
         }
-    
-        void display(float xPosition, float yPosition) 
-        {
-            //for (int i = 0; i < rows; i++) {
-                //for (int j = 0; j < cols; j++) {
-                //    cout << "[";
-                //    if (items[i][j] == nullptr) {
-                //        cout << " ";
-                //   }
-                //    else {
-                //        cout << items[i][j]->getName()[0];
-                //    }
-                //    cout << "]";
-                //}
-            //    cout << endl;
-            //}
-            if (inventoryVisible)
-            {
-                float startX = xPosition;
-                for (int i = 0; i < rows; i++) 
-                {
-                    float tempX = startX;
-                    for (int j = 0; j < cols; j++) 
-                    {
-                        if (items[i][j] == nullptr)
-                        {
-                            slotTexture.loadFromFile("assets/emptyItem.png");
-                            slotTexture.setSize(64, 64);
-                            slotTexture.setColor(255, 255, 255);
-                            slotTexture.render(tempX, yPosition);
-                        }
-                        else
-                        {
-                            slotTexture.loadFromFile("assets/emptyItem.png");
-                            slotTexture.setSize(64, 64);
-                            slotTexture.setColor(255, 255, 255);
-                            slotTexture.render(tempX, yPosition);
-                            itemTexture.loadFromFile(items[i][j]->getPath());
-                            itemTexture.setSize(64, 64);
-                            itemTexture.render(tempX, yPosition);
-                        }
-                        tempX += 100.f;
-                    }
-                    yPosition += 100.f;
-                }
-            }
-        }
+
         bool addItem(Item* item) {
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
@@ -296,7 +262,7 @@ class Inventory {
                 }
             }
 
-            cout << "Inventory sorted by item types!" << endl;
+            SDL_Log("Inventory sorted by item types!");
         }
         void filter(char input) {
             cout << "Show items which names start with: " << input << ";" << endl;
@@ -377,7 +343,64 @@ class Inventory {
     
             delete[] items;
         }
-    
-};
+        Button*** getSlotButtons()
+        {
+            return slotButtons;
+        }
 
+        void renderSlotButtons(float xPosition, float yPosition)
+        {
+            float startX = xPosition;
+            for (int i = 0; i < rows; i++)
+            {
+                float tempX = startX;
+                for (int j = 0; j < cols; j++)
+                {
+                    if (slotButtons[i][j] != nullptr && slotButtons[i][j]->isActive)
+                    {
+                        slotButtons[i][j]->setPosition(tempX, yPosition);
+                        if(items[i][j] != nullptr)
+                        {
+                            slotButtons[i][j]->setLabelAsPNG(items[i][j]->getPath());
+                        }
+                        slotButtons[i][j]->render();
+                    }
+                    tempX += 100.f;
+                }
+                yPosition += 100.f;
+            }
+        }
+
+        void handleSlotButtonsEvent(SDL_Event* e)
+        {
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    if (slotButtons[i][j] != nullptr && slotButtons[i][j]->isActive)
+                    {
+                        slotButtons[i][j]->handleEvent(e);
+                    }
+                }
+            }
+        }
+
+        void setSlotButtonsPosition(float xPosition, float yPosition)
+        {
+            float startX = xPosition;
+            for (int i = 0; i < rows; i++)
+            {
+                float tempX = startX;
+                for (int j = 0; j < cols; j++)
+                {
+                    if (slotButtons[i][j] != nullptr)
+                    {
+                        slotButtons[i][j]->setPosition(tempX, yPosition);
+                    }
+                    tempX += 100.f;
+                }
+                yPosition += 100.f;
+            }
+        }
+};
 #endif

@@ -15,7 +15,7 @@
 #include "items.hpp"
 #include "shotgun.hpp"
 #include "button.cpp"
-#include "shop.hpp"
+//#include "shop.hpp"
 #include "player.hpp"
 
 using namespace std;
@@ -185,6 +185,27 @@ void close()
     SDL_Quit();
 }
 
+void advanceTurn(vector<Player*>& players, int& currentTurn) {
+    int startingTurn = currentTurn;
+    do {
+        currentTurn = (currentTurn + 1) % players.size();
+    } while (players[currentTurn]->getHealth() <= 0 && currentTurn != startingTurn);
+}
+void distribiutateItems(vector<Player*>& players, vector<Item*>& allItems)
+{
+    int items = 0;
+    for(int i = 0; i < players.size();i++)
+    {
+        while (items < 2)
+        {
+            int randIndex = rand() % allItems.size();
+            players[i]->getInventory()->addItem(allItems[randIndex]);
+            items++;
+        }
+        items = 0;
+    }
+}
+
 int main(int argc, char* args[])
 {
     
@@ -195,6 +216,7 @@ int main(int argc, char* args[])
     }
     else
     {
+
         bool loaded = false;
 
         //turn meter
@@ -206,7 +228,7 @@ int main(int argc, char* args[])
 
         Shotgun shotgun;
         Button shotgunButt(140,50);
-        shotgunButt.setPosition(365.f,340.f);
+        shotgunButt.setPosition(340.f,340.f);
 
         Texture shotgunPNG;
 
@@ -261,18 +283,38 @@ int main(int argc, char* args[])
         bool shootVisible = false;
         bool targetSelection = false;
 
+        //menu For item
+        Texture box;
+        box.loadFromFile("assets/emptyItem.png");
+        box.setSize(150,300);
+
+        bool showBox = false;
+
+        Button sortBtn(100,50);
+        sortBtn.setLabel("Sort");
+        sortBtn.setPosition(365,660);
+
+
+        Button filterBtn(100,50);
+        filterBtn.setLabel("Filter");
+        filterBtn.setPosition(365,600);
+
+        Button inspectBtn(100,50); 
+        inspectBtn.setLabel("Inspect");
+        inspectBtn.setPosition(365,460);
+
+        Button useBtn(100,50);
+        useBtn.setLabel("Use");
+        useBtn.setPosition(365,530);
+
+        bool invButtonWork = false;
+        //after first round items will be given
+        bool aftSecondRound = false;
+        bool inspectMode = false;
+
         float angle = 0.0f;
 
-        Magnifying_Glass glass("Magnyfying glass",5,defensive,"assets/magnifying-glass.png");
-        Handsaw handsaw("Handsaw",5,ofensive,"assets/handsaw.png");
-        Beer beer("Beer",5,defensive,"assets/beer.png");
-        Handcuffs handcuffs("Handcuffs",5,ofensive,"assets/handcuffs.png");
-        Vodka vodka("Vodka",5,other,"assets/vodka.png");
-        Sprite_Banana sprite_Banana("Sprite banana",10,other,"assets/sprite_banana.png");
-        Uno_Reverse uno_Reverse("Uno reverse",10,other,"assets/uno_reverse.png");
-        Adrenaline adrenaline("Adrenaline",10,defensive,"assets/adrenaline.png");
-        Cigarettes cigarettes("Cigarettes",5,defensive,"assets/cigarettes.png");
-
+        //Merchant things
         vector<Item*> items;
         items.push_back(new Magnifying_Glass("Magnyfying glass",5,defensive,"assets/magnifying-glass.png"));
         items.push_back(new Handsaw("Handsaw",5,ofensive,"assets/handsaw.png"));
@@ -283,7 +325,10 @@ int main(int argc, char* args[])
         items.push_back(new Uno_Reverse("Uno reverse",10,other,"assets/uno_reverse.png"));
         items.push_back(new Adrenaline("Adrenaline",10,defensive,"assets/adrenaline.png"));
         items.push_back(new Cigarettes("Cigarettes",5,defensive,"assets/cigarettes.png"));
-        Merchant merchant(items);
+        //Merchant merchant(items);
+        bool merchantBreak = false;
+        int lastPlayer;
+        bool returnToStartPlayer = false;
 
         if(!loaded)
         {
@@ -398,6 +443,11 @@ int main(int argc, char* args[])
                 BackToMenu.handleEvent(&e);
                 shotgunButt.handleEvent(&e);
 
+                useBtn.handleEvent(&e);
+                sortBtn.handleEvent(&e);
+                filterBtn.handleEvent(&e);
+                inspectBtn.handleEvent(&e);
+
                 if(shootVisible)
                 {
                     shoot.handleEvent(&e);
@@ -410,6 +460,14 @@ int main(int argc, char* args[])
                     Player3Name.handleEvent(&e);
                     Player4Name.handleEvent(&e);
                 }
+                if(invButtonWork)
+                {
+                    players[currentTurn]->getInventory()->handleSlotButtonsEvent(&e);
+                }   
+                //if(merchantBreak)
+                //{
+                //    merchant.handleEvent(&e,players[currentTurn]);
+                //}
             }
             if (renderText)
             {
@@ -573,6 +631,8 @@ int main(int argc, char* args[])
             if(!playerInput && !showOption && Startbutton.isActive == false && !guideVisible)
             {
                 //selectedPlayers number
+                invButtonWork = true;
+                showBox = true;
                 //playerNames vector of players names
                 menuVisible = false;
                 float tempXpositon = 10.f;
@@ -596,7 +656,7 @@ int main(int argc, char* args[])
                             {
                                 players[i]->nameText.render(tempXpositon + 180.f,tempYposition + 100.f);
                             }
-                            players[i]->getInventory()->display(tempXpositon,tempYposition);
+                            players[i]->getInventory()->renderSlotButtons(tempXpositon,tempYposition);
                             players[i]->healthText.render(tempXpositon + 180.f,tempYposition + 130.f);
                             players[i]->coinText.render(tempXpositon + 180.f,tempYposition + 160.f);
                         }
@@ -607,7 +667,7 @@ int main(int argc, char* args[])
                             {
                                 players[i]->nameText.render(tempXpositon - 150.f,tempYposition + 100.f);
                             }
-                            players[i]->getInventory()->display(tempXpositon,tempYposition);
+                            players[i]->getInventory()->renderSlotButtons(tempXpositon,tempYposition);
                             players[i]->healthText.render(tempXpositon - 150.f,tempYposition + 130.f);
                             players[i]->coinText.render(tempXpositon - 150.f,tempYposition + 160.f);
                         }
@@ -619,7 +679,7 @@ int main(int argc, char* args[])
                             {
                                 players[i]->nameText.render(tempXpositon + 180.f,tempYposition + 100.f);
                             }
-                            players[i]->getInventory()->display(tempXpositon,tempYposition);
+                            players[i]->getInventory()->renderSlotButtons(tempXpositon,tempYposition);
                             players[i]->healthText.render(tempXpositon + 180.f,tempYposition + 130.f);
                             players[i]->coinText.render(tempXpositon + 180.f,tempYposition + 160.f);
                         }
@@ -630,7 +690,7 @@ int main(int argc, char* args[])
                             {
                                 players[i]->nameText.render(tempXpositon - 150.f,tempYposition + 100.f);
                             }
-                            players[i]->getInventory()->display(tempXpositon,tempYposition);
+                            players[i]->getInventory()->renderSlotButtons(tempXpositon,tempYposition);
                             players[i]->healthText.render(tempXpositon - 150.f,tempYposition + 130.f);
                             players[i]->coinText.render(tempXpositon - 150.f,tempYposition + 160.f);
                         }
@@ -639,7 +699,7 @@ int main(int argc, char* args[])
                 if(shotgunVisible)
                 {
                     shotgunButt.render();
-                    shotgunPNG.render(365.f,350.f,nullptr,angle);
+                    shotgunPNG.render(350.f,350.f,nullptr,angle);
                 }
                 if (!players.empty()) 
                 {
@@ -661,31 +721,76 @@ int main(int argc, char* args[])
                         players[i]->nameVisibly = false;
                     }
                 
-                    Player1Name.setLabel(players[0]->getName());
-                    Player1Name.setPosition(190.f, 80.f);
-                    Player1Name.isActive = true;
-                
-                    Player2Name.setLabel(players[1]->getName());
-                    Player2Name.setPosition(510.f, 80.f);
-                    Player2Name.isActive = true;
-                
-                    Player3Name.setLabel(players[2]->getName());
-                    Player3Name.setPosition(190.f, 500.f);
-                    Player3Name.isActive = true;
-                
+                    if(players[0]->getHealth() > 0) {
+                        Player1Name.setLabel(players[0]->getName());
+                        Player1Name.setPosition(190.f, 80.f);
+                        Player1Name.isActive = true;
+                    } else {
+                        Player1Name.isActive = false;
+                    }
+                    
+                    if(players[1]->getHealth() > 0) 
+                    {
+                        Player2Name.setLabel(players[1]->getName());
+                        Player2Name.setPosition(510.f, 80.f);
+                        Player2Name.isActive = true;
+                    } 
+                    else 
+                    {
+                        Player2Name.isActive = false;
+                    }
+
+                    if(players[2]->getHealth() > 0) 
+                    {
+                        Player3Name.setLabel(players[2]->getName());
+                        Player3Name.setPosition(190.f, 500.f);
+                        Player3Name.isActive = true;
+                    } 
+                    else 
+                    {
+                        Player3Name.isActive = false;
+                    }
+
+                    if(players[3]->getHealth() > 0) 
+                    {
                     Player4Name.setLabel(players[3]->getName());
                     Player4Name.setPosition(510.f, 500.f);
                     Player4Name.isActive = true;
+                    } 
+                    else 
+                    {
+                        Player4Name.isActive = false;
+                    }
                 }
                 if (shootVisible) {
                     shoot.render();
                 }
                 
+                if(sortBtn.ifClicked())
+                {
+                    players[currentTurn]->getInventory()->sort();
+                }
+                //if(filterBtn.ifClicked())
+                //{
+                ///    players[currentTurn]->getInventory()->sort();
+                //}
+                ///if(useBtn.ifClicked())
+                ////{
+                //    players[currentTurn]->getInventory()->sort();
+                //}
+                //if(inspectBtn.ifClicked())
+                //{
+                //    
+                //}
+                
                 if (targetSelection) {
-                    Player1Name.render();
-                    Player2Name.render();
-                    Player3Name.render();
-                    Player4Name.render();
+                    if (targetSelection) 
+                    {
+                        if (Player1Name.isActive) Player1Name.render();
+                        if (Player2Name.isActive) Player2Name.render();
+                        if (Player3Name.isActive) Player3Name.render();
+                        if (Player4Name.isActive) Player4Name.render();
+                    }
                 }
                 if (Player1Name.ifClicked()) {
                     SDL_Log("Player 1 targeted!");
@@ -696,27 +801,13 @@ int main(int argc, char* args[])
 
                         if(tempHealth != players[currentTurn]->getHealth())
                         {
-                            if(currentTurn == 3)
-                            {
-                                currentTurn = 0;
-                            }
-                            else
-                            {
-                                currentTurn += 1;
-                            }
+                            advanceTurn(players, currentTurn);
                         }
                     }
                     else
                     {
                         shotgun.shootOther(players[currentTurn],players[0]);
-                        if(currentTurn == 3)
-                        {
-                            currentTurn = 0;
-                        }
-                        else
-                        {
-                            currentTurn += 1;
-                        }
+                        advanceTurn(players, currentTurn);
                     }
                     for(int i = 0; i < players.size(); i++)
                     {
@@ -737,27 +828,13 @@ int main(int argc, char* args[])
                         shotgun.shootSelf(players[currentTurn]);
                         if(tempHealth != players[currentTurn]->getHealth())
                         {
-                            if(currentTurn == 3)
-                            {
-                                currentTurn = 0;
-                            }
-                            else
-                            {
-                                currentTurn += 1;
-                            }
+                            advanceTurn(players, currentTurn);
                         }
                     }
                     else
                     {
                         shotgun.shootOther(players[currentTurn],players[1]);
-                        if(currentTurn == 3)
-                        {
-                            currentTurn = 0;
-                        }
-                        else
-                        {
-                            currentTurn += 1;
-                        }
+                        advanceTurn(players, currentTurn);
                     }
                     for(int i = 0; i < players.size(); i++)
                     {
@@ -778,27 +855,13 @@ int main(int argc, char* args[])
                         shotgun.shootSelf(players[currentTurn]);
                         if(tempHealth != players[currentTurn]->getHealth())
                         {
-                            if(currentTurn == 3)
-                            {
-                                currentTurn = 0;
-                            }
-                            else
-                            {
-                                currentTurn += 1;
-                            }
+                            advanceTurn(players, currentTurn);
                         }
                     }
                     else
                     {
                         shotgun.shootOther(players[currentTurn],players[2]);
-                        if(currentTurn == 3)
-                        {
-                            currentTurn = 0;
-                        }
-                        else
-                        {
-                            currentTurn += 1;
-                        }
+                        advanceTurn(players, currentTurn);
                     }
                     for(int i = 0; i < players.size(); i++)
                     {
@@ -819,27 +882,13 @@ int main(int argc, char* args[])
                         shotgun.shootSelf(players[currentTurn]);
                         if(tempHealth != players[currentTurn]->getHealth())
                         {
-                            if(currentTurn == 3)
-                            {
-                                currentTurn = 0;
-                            }
-                            else
-                            {
-                                currentTurn += 1;
-                            }
+                            advanceTurn(players, currentTurn);
                         }
                     }
                     else
                     {
                         shotgun.shootOther(players[currentTurn],players[3]);
-                        if(currentTurn == 3)
-                        {
-                            currentTurn = 0;
-                        }
-                        else
-                        {
-                            currentTurn += 1;
-                        }
+                        advanceTurn(players, currentTurn);
                     }
                     for(int i = 0; i < players.size(); i++)
                     {
@@ -853,6 +902,7 @@ int main(int argc, char* args[])
                     targetSelection = false;
                 }
             }
+            
             if(shown)
             {
                 shotgun.displayChamber();
@@ -862,9 +912,25 @@ int main(int argc, char* args[])
                     shotgun.sortBullets();
                 }
             }
+            if(merchantBreak)
+            {
+                //if(lastPlayer == NULL)
+                //{
+                //    lastPlayer = currentTurn;
+                //}
+                //merchant.display();
+                aftSecondRound = true;
+                merchantBreak = false;
+                distribiutateItems(players,items);
+                shotgunVisible = true;
+                shotgun.reload();
+                shown = true;
+                showTimeStart = SDL_GetTicks();
+            }
             if(shotgun.getChamber().empty())
             {
                 shotgunVisible = false;
+                merchantBreak = true;
             }
             SDL_RenderPresent(gRenderer);
 

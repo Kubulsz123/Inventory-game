@@ -235,7 +235,6 @@ CMakeFiles/Inventory-Game.dir/src/main.cpp.obj: \
  C:/msys64/ucrt64/include/c++/14.2.0/pstl/glue_algorithm_defs.h \
  C:/msys64/ucrt64/include/c++/14.2.0/pstl/execution_defs.h \
  C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\items.hpp \
- C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\shotgun.hpp \
- C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\player.hpp \
  C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\button.cpp \
- C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\shop.hpp
+ C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\shotgun.hpp \
+ C:\Users\Adam\Desktop\Buckshot\Inventory-game\src\player.hpp

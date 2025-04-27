@@ -28,7 +28,13 @@ class Button
         int kButtonHeight;
         bool buttonClicked;
         bool isHovered;
-        
+        Button() :
+            kButtonWidth{64},
+            kButtonHeight{64},
+            position{0.f, 0.f},
+            buttonClicked(false),
+            isHovered(false)
+        {}
         Button(int width,int height) :
             kButtonWidth{width},
             kButtonHeight{height},
@@ -83,6 +89,11 @@ class Button
         {
             position.x = x;
             position.y = y;
+        }
+    
+        bool isInside(float mouseX, float mouseY) 
+        {
+            return (mouseX >= position.x && mouseX <= position.x + kButtonWidth && mouseY >= position.y && mouseY <= position.y + kButtonHeight);
         }
         void setLabel(const string& text, SDL_Color color = {0, 0, 0, 255})
         {
@@ -152,6 +163,10 @@ class Button
             {
                 buttonClicked = true;
             }
+        }
+        void setColor(Uint8 r, Uint8 g, Uint8 b)
+        {
+            sharedSprite.setColor(r,g,b);
         }
         ~Button()
         {
