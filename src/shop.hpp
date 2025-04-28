@@ -1,3 +1,15 @@
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3_image/SDL_image.h>
+#include <SDL3_ttf/SDL_ttf.h>
+#include <iostream>
+#include <vector>
+
+#include "items.hpp"
+#include "button.cpp"
+#
+using namespace std;
+
 class Merchant {
     private:
         vector<Item*> merchant_items;

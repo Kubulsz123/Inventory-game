@@ -205,6 +205,33 @@ void distribiutateItems(vector<Player*>& players, vector<Item*>& allItems)
         items = 0;
     }
 }
+bool useGlass(Shotgun shotgun)
+{
+    if(!shotgun.getChamber().empty())
+    {
+        shotgun.revealNextBullet();
+        return true;
+    }
+    return false;
+}
+bool useHandsaw(Shotgun shotgun)
+{
+    if(!shotgun.getChamber().empty())
+    {
+        shotgun.enableDoubleDamage();
+        return true;
+    }
+    return false;
+}
+bool useBeer(Shotgun shotgun) 
+{
+    if(!shotgun.getChamber().empty())
+    {
+        shotgun.removeLastBullet();
+        return true;
+    }
+    return false;
+}
 
 int main(int argc, char* args[])
 {
@@ -254,12 +281,14 @@ int main(int argc, char* args[])
         Texture gInputTextTexture;
         Texture gPromptTextTexture;
         Texture tempGuide;
+        Texture game;
 
+        game.loadFromFile("assets/game.png");
         menu.loadFromFile("assets/homeshotmenu.png");
         //buttons
-        Button Player1(100,50);
-        Button Player2(100,50);
-        Button Player3(100,50);
+        Button Player1(250,50);
+        Button Player2(250,50);
+        Button Player3(250,50);
         Button Player4(100,50);
 
         Player1.isActive = false;
@@ -286,26 +315,17 @@ int main(int argc, char* args[])
         //menu For item
         Texture box;
         box.loadFromFile("assets/emptyItem.png");
-        box.setSize(150,300);
+        box.setSize(150,160);
 
-        bool showBox = false;
+        bool showBox = true;
 
         Button sortBtn(100,50);
         sortBtn.setLabel("Sort");
-        sortBtn.setPosition(365,660);
-
+        sortBtn.setPosition(365,570);
 
         Button filterBtn(100,50);
         filterBtn.setLabel("Filter");
-        filterBtn.setPosition(365,600);
-
-        Button inspectBtn(100,50); 
-        inspectBtn.setLabel("Inspect");
-        inspectBtn.setPosition(365,460);
-
-        Button useBtn(100,50);
-        useBtn.setLabel("Use");
-        useBtn.setPosition(365,530);
+        filterBtn.setPosition(365,630);
 
         bool invButtonWork = false;
         //after first round items will be given
@@ -313,6 +333,11 @@ int main(int argc, char* args[])
         bool inspectMode = false;
 
         float angle = 0.0f;
+
+        Texture winner;
+        bool winnerChecker = false;
+        int aliveCounter = 0;
+        string winnerName;
 
         //Merchant things
         vector<Item*> items;
@@ -348,6 +373,7 @@ int main(int argc, char* args[])
         bool start = true;
         bool menuVisible = true;
         bool shotgunVisible = true;
+        bool gameVisible = false;
 
         SDL_Event e;
         SDL_zero(e);
@@ -443,10 +469,8 @@ int main(int argc, char* args[])
                 BackToMenu.handleEvent(&e);
                 shotgunButt.handleEvent(&e);
 
-                useBtn.handleEvent(&e);
                 sortBtn.handleEvent(&e);
                 filterBtn.handleEvent(&e);
-                inspectBtn.handleEvent(&e);
 
                 if(shootVisible)
                 {
@@ -465,8 +489,16 @@ int main(int argc, char* args[])
                     players[currentTurn]->getInventory()->handleSlotButtonsEvent(&e);
                     if(!merchantBreak)
                     {
+                        if (players[currentTurn]->getInventory()->inspectButton->isActive)
+                        {
+                            players[currentTurn]->getInventory()->inspectButton->handleEvent(&e);
+                        }
+                        if (players[currentTurn]->getInventory()->useButton->isActive)
+                        {
+                            players[currentTurn]->getInventory()->useButton->handleEvent(&e);
+                        }
+                        players[currentTurn]->getInventory()->handleItemClick(&e,currentTurn);
                         players[currentTurn]->getInventory()->handleInspectUseEvent(&e);
-                        players[currentTurn]->getInventory()->handleItemClick(&e);
                         if (e.type == SDL_EVENT_KEY_DOWN) {
                             if (e.key.key == SDLK_ESCAPE) {
                                 // Call the method to handle Escape key press
@@ -502,6 +534,10 @@ int main(int argc, char* args[])
             {
                 menu.render(0.f,0.f);
             }
+            if(gameVisible)
+            {
+                game.render(0.f,0.f);
+            }
 
             if(start)
             {
@@ -527,13 +563,13 @@ int main(int argc, char* args[])
                 start = false;
                 
                 Player1.setPosition(370.f,200.f);
-                Player1.setLabel("1");
+                Player1.setLabel("1 (Out of order)");
 
                 Player2.setPosition(370.f,300.f);
-                Player2.setLabel("2");
+                Player2.setLabel("2 (Out of order)");
 
                 Player3.setPosition(370.f,400.f);
-                Player3.setLabel("3");
+                Player3.setLabel("3 (Out of order)");
 
                 Player4.setPosition(370.f,500.f);
                 Player4.setLabel("4");
@@ -638,14 +674,20 @@ int main(int argc, char* args[])
                 Player3.isActive = false;
                 Player4.isActive = false;
             }
+            if(winnerChecker)
+            {
+                winner.loadFromRenderedText("Winner: " + winnerName,{0xFF, 0xFF, 0xFF, 0xFF});
+                winner.render(300.f,300.f);
+            }
 
-            if(!playerInput && !showOption && Startbutton.isActive == false && !guideVisible)
+            if(!playerInput && !showOption && Startbutton.isActive == false && !guideVisible && !winnerChecker)
             {
                 //selectedPlayers number
                 invButtonWork = true;
                 showBox = true;
                 //playerNames vector of players names
                 menuVisible = false;
+                gameVisible = true;
                 float tempXpositon = 10.f;
                 float tempYposition = 10.f;
                 if(selectedPlayers == 4)
@@ -705,8 +747,65 @@ int main(int argc, char* args[])
                             players[i]->healthText.render(tempXpositon - 150.f,tempYposition + 130.f);
                             players[i]->coinText.render(tempXpositon - 150.f,tempYposition + 160.f);
                         }
+                        if (gameVisible)
+                        {
+                            if (showBox) 
+                            {
+                                // Render pre-made box texture
+                                box.render(340.f, 550.f);
+
+                                // Render buttons
+                                sortBtn.render();
+                                filterBtn.render();
+                            }
+                        }
+                        if (players[currentTurn]->getInventory()->inspectionEnded) {
+                            showBox = true;
+                        }
                     }
                 }
+                if(players[currentTurn]->getInventory()->inspectButton->ifClicked())
+                {
+                    showBox = false;
+                }
+
+                if(players[currentTurn]->getInventory()->useButton->ifClicked())
+                {
+                    Inventory* inventory = players[currentTurn]->getInventory();
+                    Item* selected = inventory->selectedItem;
+                    if(selected != nullptr)
+                    {
+                        if(selected->getName() == "Magnyfying glass")
+                        {
+                            SDL_Log("work1");
+                            useGlass(shotgun);
+                        }
+                        if(selected->getName() == "Beer")
+                        {
+                            SDL_Log("work2");
+                            useBeer(shotgun);
+
+                        }
+                        else if(selected->getName() == "Handsaw")
+                        {
+                            SDL_Log("work3");
+                            useHandsaw(shotgun);
+                        }
+                
+                        for (int i = 0; i < inventory->getRows(); ++i)
+                        {
+                            for (int j = 0; j < inventory->getCols(); ++j)
+                            {
+                                if (inventory->getItem(i,j) == selected)
+                                {
+                                    inventory->removeItem(i,j);
+                                    inventory->hideInspectUseButtons();
+                                }
+                            }
+                        }
+                    }
+                }
+                
                 if(shotgunVisible)
                 {
                     shotgunButt.render();
@@ -781,18 +880,14 @@ int main(int argc, char* args[])
                 {
                     players[currentTurn]->getInventory()->sort();
                 }
-                //if(filterBtn.ifClicked())
+                //if(useBtn.ifClicked())
                 //{
-                ///    players[currentTurn]->getInventory()->sort();
-                //}
-                ///if(useBtn.ifClicked())
-                ////{
                 //    players[currentTurn]->getInventory()->sort();
                 //}
-                //if(inspectBtn.ifClicked())
-                //{
-                //    
-                //}
+                if(players[currentTurn]->getInventory()->inspectButton->ifClicked())
+                {
+                    players[currentTurn]->getInventory()->showInspectBox = true;        // Start inspecting
+                }
                 
                 if (targetSelection) {
                     if (targetSelection) 
@@ -918,41 +1013,56 @@ int main(int argc, char* args[])
                         players[i]->dirty = true;
                     }
                     angle = 45.f;
+
                     targetSelection = false;
                 }
-            }
-            
-            if(shown)
-            {
-                shotgun.displayChamber();
-                SDL_Log("Showing shotgun chamber...");
-                if (SDL_GetTicks() - showTimeStart > 3000) {
-                    shown = false;
-                    shotgun.sortBullets();
+                if(shown)
+                {
+                    shotgun.displayChamber();
+                    SDL_Log("Showing shotgun chamber...");
+                    if (SDL_GetTicks() - showTimeStart > 3000) {
+                        shown = false;
+                        shotgun.sortBullets();
+                    }
+                }
+                if(merchantBreak)
+                {
+                    //if(lastPlayer == NULL)
+                    //{
+                    //    lastPlayer = currentTurn;
+                    //}
+                    //merchant.display();
+                    aftSecondRound = true;
+                    merchantBreak = false;
+                    distribiutateItems(players,items);
+                    shotgunVisible = true;
+                    shotgun.reload();
+                    shown = true;
+                    showTimeStart = SDL_GetTicks();
+                }
+                if(shotgun.getChamber().empty())
+                {
+                    shotgunVisible = false;
+                    merchantBreak = true;
                 }
             }
-            if(merchantBreak)
+            aliveCounter = 0;
+            Player* tempWinner = nullptr;
+            for (int i = 0; i < players.size(); i++)
             {
-                //if(lastPlayer == NULL)
-                //{
-                //    lastPlayer = currentTurn;
-                //}
-                //merchant.display();
-                aftSecondRound = true;
-                merchantBreak = false;
-                distribiutateItems(players,items);
-                shotgunVisible = true;
-                shotgun.reload();
-                shown = true;
-                showTimeStart = SDL_GetTicks();
+                if (players[i]->isAlive())
+                {
+                    aliveCounter += 1;
+                    tempWinner = players[i];
+                }
             }
-            if(shotgun.getChamber().empty())
+
+            if (aliveCounter == 1 && tempWinner != nullptr)
             {
-                shotgunVisible = false;
-                merchantBreak = true;
+                winnerName = tempWinner->getName();
+                winnerChecker = true;
             }
             SDL_RenderPresent(gRenderer);
-
             //Cap frame rate
             constexpr Uint64 nsPerFrame = 1000000000 / kScreenFps; 
             Uint64 frameNs = capTimer.getTicksNS();

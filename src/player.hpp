@@ -69,6 +69,17 @@ class Player
         {
             cout << "Player: " << name << ", Health: " << health << endl;
         }
+        bool isAlive()
+        {
+            if(health > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 };
 
 #endif

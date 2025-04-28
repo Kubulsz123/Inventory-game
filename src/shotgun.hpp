@@ -61,6 +61,18 @@ class Shotgun {
         vector<Bullet*> chamber;
         Texture shotgun;
         string pathfile = "assets/shotgun.png";
+        bool doubleDamageEnabled = false;
+
+        // For temporary rendering (for 5 seconds)
+        Bullet* revealedBullet = nullptr;
+        Uint32 revealStartTime = 0;
+        bool bulletRevealed = false;
+
+        bool chamberShow = true;
+
+        int removedBulletsCount = 0;
+        Uint32 removalStartTime = 0;
+        bool bulletRemoved = false;
 
     public:
         Shotgun() {
@@ -106,6 +118,7 @@ class Shotgun {
                     chamber.push_back(new BlankBullet());
                 }
             }
+            chamberShow = true;
         }
 
         ~Shotgun() {
@@ -116,12 +129,16 @@ class Shotgun {
 
         void displayChamber() {
 
-            float x = 520.f;
-            for (int i = 0; i < chamber.size(); ++i) 
+            if(chamberShow)
             {
-                chamber[i]->bullet.setSize(25,25);
-                chamber[i]->bullet.render(x,360.f,nullptr,270.f);
-                x = x + 40.f;
+                float x = 520.f;
+                for (int i = 0; i < chamber.size(); ++i) 
+                {
+                    chamber[i]->bullet.setSize(25,25);
+                    chamber[i]->bullet.render(x,360.f,nullptr,270.f);
+                    x = x + 40.f;
+                }
+                chamberShow = false;
             }
         }
     
@@ -135,11 +152,17 @@ class Shotgun {
             chamber.pop_back();
     
             if (bullet->isLive()) {
-                player->setHealth(player->getHealth() - 1);
+                int damage = doubleDamageEnabled ? 2 : 1;
+                player->setHealth(player->getHealth() - damage);
             } else {
                 player->setGold(1);
             }
-    
+            
+            if(doubleDamageEnabled)
+            {
+                doubleDamageEnabled = false;
+            }
+
             delete bullet;
             return true;
         }
@@ -153,12 +176,48 @@ class Shotgun {
             chamber.pop_back();
     
             if (bullet->isLive()) {
-                target->setHealth(target->getHealth() - 1);
+                int damage = doubleDamageEnabled ? 2 : 1;
+                target->setHealth(target->getHealth() - damage);
                 shooter->setGold(1);
+            }
+
+            if(doubleDamageEnabled)
+            {
+                doubleDamageEnabled = false;
             }
     
             delete bullet;
             return true;
+        }
+
+        void revealNextBullet() {
+            if (!chamber.empty()) {
+                if (revealedBullet) {
+                    delete revealedBullet;
+                }
+                if (chamber.back()->isLive()) {
+                    revealedBullet = new LiveBullet();
+                } else {
+                    revealedBullet = new BlankBullet();
+                }
+                revealStartTime = SDL_GetTicks();
+                bulletRevealed = true;
+            }
+        }
+    
+        void enableDoubleDamage() {
+            doubleDamageEnabled = true;
+        }
+    
+        void removeLastBullet() {
+            if (!chamber.empty()) {
+                Bullet* first = chamber.back();
+                chamber.pop_back();
+    
+                removedBulletsCount++;
+                removalStartTime = SDL_GetTicks();
+                bulletRemoved = true;
+            }
         }
     
 };

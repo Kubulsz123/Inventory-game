@@ -6,7 +6,6 @@
 #include <string>
 
 #include "Globals.hpp"
-
 #ifndef texture_hpp
 #define texture_hpp
 
@@ -72,11 +71,11 @@ class Texture
             SDL_DestroySurface(loadedSurface);
             return true;
         }
-        bool loadFromRenderedText(const std::string& textureText, SDL_Color textColor)
+        bool loadFromRenderedText(const std::string& textureText, SDL_Color textColor, int textSize = 28)
         {
             destroy();
             string fontPath = "assets/lazy.ttf";
-            if(gFont = TTF_OpenFont(fontPath.c_str(), 28); gFont == nullptr)
+            if(gFont = TTF_OpenFont(fontPath.c_str(), textSize); gFont == nullptr)
             {
                 SDL_Log( "Could not load %s! SDL_ttf Error: %s\n", fontPath.c_str(), SDL_GetError());
             }
@@ -101,6 +100,41 @@ class Texture
             loaded = true;
 
             SDL_DestroySurface(textSurface);
+            return true;
+        }
+        bool loadWrappedText(const std::string& textureText, SDL_Color textColor,float boxWidth, int textSize = 28)
+        {
+            destroy(); 
+        
+            std::string fontPath = "assets/lazy.ttf";
+            gFont = TTF_OpenFont(fontPath.c_str(), textSize);
+            if (gFont == nullptr)
+            {
+                SDL_Log("Could not load %s! SDL_ttf Error: %s\n", fontPath.c_str(), SDL_GetError());
+                return false;
+            }
+          
+            SDL_Surface* textSurface = TTF_RenderText_Blended_Wrapped(gFont, textureText.c_str(),textureText.length(), textColor, static_cast<Uint32>(boxWidth));
+            if (textSurface == nullptr)
+            {
+                SDL_Log("Unable to render text surface! SDL_ttf Error: %s\n", SDL_GetError());
+                return false;
+            }
+        
+            mTexture = SDL_CreateTextureFromSurface(gRenderer, textSurface);
+            if (mTexture == nullptr)
+            {
+                SDL_Log("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
+                SDL_DestroySurface(textSurface);
+                return false;
+            }
+
+            mWidth = textSurface->w;
+            mHeight = textSurface->h;
+            loaded = true;
+        
+            SDL_DestroySurface(textSurface);
+        
             return true;
         }
         void setSize(int width, int height)

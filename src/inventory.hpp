@@ -9,10 +9,10 @@
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
 
+#include "texture.hpp"
 #include "items.hpp"
 #include "Globals.hpp"
 #include "button.cpp"
-#include "texture.hpp"
 
 #ifndef inventory_hpp
 #define inventory_hpp
@@ -30,10 +30,15 @@ class Inventory {
         int cols;
         Button*** slotButtons;
         bool inventoryVisible = true;
+        string inspectedItemName;
+        string inspectedItemCoin;
+        string inspectedItemDescription;
+    public:
+    Item* selectedItem = nullptr;  // Currently selected item for inspection/us
+        bool showInspectBox = false;
         Button* inspectButton;  // Button for inspecting item
         Button* useButton;      // Button for using item
-        Item* selectedItem = nullptr;  // Currently selected item for inspection/use
-    public:
+        bool inspectionEnded = false;
         Inventory(int rows, int cols) : rows{rows}, cols{cols} 
         {
             items = new Item**[rows];
@@ -140,51 +145,50 @@ class Inventory {
     
         void inspect(Item* item) {
             if (item != nullptr) {
-                if (item->getName() == "magnifying glass") {
-                    cout << "Inspecting item: " << item->getName() << endl;
-                    item->inspect();
-                }
-                else if (item->getName() == "beer") {
-                    cout << "Inspecting item: " << item->getName() << endl;
-                    item->inspect();
-                }
-                else if (item->getName() == "handcuffs") {
-                    cout << "Inspecting item: " << item->getName() << endl;
-                    item->inspect();
-                }
-                else if (item->getName() == "vodka") {
-                    cout << "Inspecting item: " << item->getName() << endl;
-                    item->inspect();
-                }
-                else if (item->getName() == "sprite_banana") {
-                    cout << "Inspecting item: " << item->getName() << endl;
-                    item->inspect();
-                }
-                else if (item->getName() == "uno_reverse") {
-                    cout << "Inspecting item: " << item->getName() << endl;
-                    item->inspect();
-                }
-                else if (item->getName() == "adrenaline") {
-                    cout << "Inspecting item: " << item->getName() << endl;
-                    item->inspect();
-                }
-                else if (item->getName() == "cigarettes") {
-                    cout << "Inspecting item: " << item->getName() << endl;
-                    item->inspect();
-                }
-                else if (item->getName() == "handsaw") {
-                    cout << "Inspecting item: " << item->getName() << endl;
-                    item->inspect();
-                } else {
-                    cout << "Inspecting item: " << item->getName() << endl;
-                    item->display();
-                }
-            }
-            else 
-            {
+                inspectedItemName = item->getName();
+                inspectedItemCoin = "Gold: " + to_string(item->getPrice());
+                SDL_Log(inspectedItemCoin.c_str());
+                inspectedItemDescription = item->getDescription();
+                SDL_Log(inspectedItemDescription.c_str());
+                showInspectBox = true;
+                inspectionEnded = false;
+        
+                hideInspectUseButtons();
+            } else {
                 cout << "Item not found!" << endl;
             }
         }
+
+        void renderInspectBox()
+        {
+            if (showInspectBox)
+            {
+                SDL_FRect boxRect = { 340.f, 0.f, 180.f,165.f}; 
+                SDL_SetRenderDrawColor(gRenderer, 150, 75, 0, 255); 
+                SDL_RenderFillRect(gRenderer, &boxRect);
+
+
+                SDL_SetRenderDrawColor(gRenderer,  0, 0, 0, 200);
+                SDL_RenderRect(gRenderer, &boxRect);
+
+                Texture nameText;
+                nameText.loadFromRenderedText(inspectedItemName, {0, 0, 0, 200},28);
+                nameText.render(boxRect.x + 10, boxRect.y + 10);
+
+                Texture coinText;
+                coinText.loadFromRenderedText(inspectedItemCoin.c_str(), { 0, 0, 0, 200},28);
+                coinText.render(boxRect.x + 10, boxRect.y + 50);
+
+                Texture descText;
+                descText.loadWrappedText(inspectedItemDescription.c_str(), { 0, 0, 0, 200},180.f,18);
+                descText.render(boxRect.x + 10, boxRect.y + 90);
+
+                nameText.destroy();
+                coinText.destroy();
+                descText.destroy();
+            }
+        }
+
     
         bool move(Item* item, int targetRow, int targetCol) {
             if (targetRow < 0 || targetRow >= rows || targetCol < 0 || targetCol >= cols) {
@@ -203,35 +207,6 @@ class Inventory {
                         items[targetRow][targetCol] = item;
                         items[i][j] = nullptr;
                         cout << "Moved item to position (" << targetRow << ", " << targetCol << ")" << endl;
-                        return true;
-                    }
-                }
-            }
-    
-            cout << "Item not found in inventory!" << endl;
-            return false;
-        }
-    
-        bool use(Item* item) {
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    if (items[i][j] == item) {
-                        // Here you would add later on the logic to use the item in our game
-                        if (item->getType() == defensive) {
-                            cout << "Using item: " << item->getName() << endl;
-                            removeItem(i, j);
-                        }
-                        else if (item->getType() == ofensive) {
-                            cout << "Using item: " << item->getName() << endl;
-                            removeItem(i, j);
-                        }
-                        else if (item->getType() == other) {
-                            cout << "Using item: " << item->getName() << endl;
-                            removeItem(i, j);
-                        }
-                        else {
-                            cout << "Item is not usable!" << endl;
-                        }
                         return true;
                     }
                 }
@@ -372,10 +347,15 @@ class Inventory {
         }
 
         void handleEscape(SDL_Event* e) {
-            // Check if the escape key was pressed
             if (e->type == SDL_EVENT_KEY_DOWN && e->key.key == SDLK_ESCAPE) {
-                hideInspectUseButtons();  // Hide or deactivate the buttons
+                hideInspectUseButtons();
             }
+            if (showInspectBox)
+            {
+                showInspectBox = false;
+                inspectionEnded = true;
+            }
+            
         }
 
         void setSlotButtonsPosition(float xPosition, float yPosition)
@@ -396,21 +376,28 @@ class Inventory {
             }
         }
         
-        // Handle item click to display Inspect/Use box
-        void handleItemClick(SDL_Event* e) {
+        void handleItemClick(SDL_Event* e,int currentTurn) {
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
                     if (slotButtons[i][j] != nullptr && slotButtons[i][j]->isActive) {
                         if (slotButtons[i][j]->ifClicked()) {
                             selectedItem = items[i][j];
                             if (selectedItem != nullptr) {
-                                // Position buttons near the clicked item
-                                float xPosition = slotButtons[i][j]->getPositionX() + 70; // Adjust for position
+                                float xPosition = slotButtons[i][j]->getPositionX();
                                 float yPosition = slotButtons[i][j]->getPositionY();
+        
+                               
+                                if (currentTurn == 1 || currentTurn == 3) {
+                                   
+                                    xPosition -= 120; 
+                                } else {
+                                
+                                    xPosition += 70;  
+                                }
+        
                                 inspectButton->setPosition(xPosition, yPosition);
-                                useButton->setPosition(xPosition, yPosition + 60);  // Place below Inspect button
-
-                                // Set the buttons active for interaction
+                                useButton->setPosition(xPosition, yPosition + 60);  
+                                
                                 inspectButton->isActive = true;
                                 useButton->isActive = true;
                             }
@@ -419,8 +406,6 @@ class Inventory {
                 }
             }
         }
-
-        // Render Inspect/Use buttons when an item is selected
         void renderInspectUseButtons() {
             if (inspectButton->isActive) {
                 inspectButton->render();
@@ -430,7 +415,6 @@ class Inventory {
             }
         }
 
-        // Handle events for the Inspect/Use buttons
         void handleInspectUseEvent(SDL_Event* e) {
             if (inspectButton->isActive && inspectButton->ifClicked()) {
                 if (selectedItem != nullptr) {
@@ -438,14 +422,13 @@ class Inventory {
                 }
             }
 
-            if (useButton->isActive && useButton->ifClicked()) {
+            if (useButton->isActive) {
                 if (selectedItem != nullptr) {
-                    use(selectedItem);
+                    useButton->handleEvent(e);
                 }
             }
         }
 
-        // Modify the main render function to include Inspect/Use button rendering
         void renderSlotButtons(float xPosition, float yPosition) {
             float startX = xPosition;
             for (int i = 0; i < rows; i++) {
@@ -454,6 +437,7 @@ class Inventory {
                     if (slotButtons[i][j] != nullptr && slotButtons[i][j]->isActive) {
                         slotButtons[i][j]->setPosition(tempX, yPosition);
                         if (items[i][j] != nullptr) {
+                            
                             slotButtons[i][j]->setLabelAsPNG(items[i][j]->getPath());
                         }
                         slotButtons[i][j]->render();
@@ -463,15 +447,15 @@ class Inventory {
                 yPosition += 100.f;
             }
 
-            // Render the Inspect/Use buttons
             renderInspectUseButtons();
+
+            renderInspectBox();
         }
 
-        // Function to hide the Inspect/Use buttons when necessary
         void hideInspectUseButtons() {
             inspectButton->isActive = false;
             useButton->isActive = false;
-            selectedItem = nullptr;  // Reset selected item
+            selectedItem = nullptr; 
         }
 };
 #endif
